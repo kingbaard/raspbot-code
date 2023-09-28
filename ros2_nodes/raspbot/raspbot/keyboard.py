@@ -5,7 +5,7 @@ from std_msgs.msg import Int32MultiArray
 import smbus
 import time
 import math
-import msvcrt
+import pynput
 
 class KeyboardPublisher(Node):
     def __init__(self):
@@ -20,20 +20,22 @@ class KeyboardPublisher(Node):
         self.publisher.publish(msg)
 
     def get_direction(self):
-        key = ord(msvcrt.getwch())
-        if key == 224: #Special keys (arrows, f keys, ins, del, etc.)
-            key = ord(msvcrt.getwch())
-            if key == 72: #Up arrow
-                data = [100, 100]
-            elif key == 80: #Down arrow
-                data = [-100, -100]
-            elif key == 75: #Left arrow
-                data = [-100, 100]
-            elif key == 77: #Right arrow
-                data = [100, -100]
-        else:
-            data = [0, 0]
-        return data
+        # TODO: make work with pynput
+        pass
+        # key = ord(msvcrt.getwch())
+        # if key == 224: #Special keys (arrows, f keys, ins, del, etc.)
+        #     key = ord(msvcrt.getwch())
+        #     if key == 72: #Up arrow
+        #         data = [100, 100]
+        #     elif key == 80: #Down arrow
+        #         data = [-100, -100]
+        #     elif key == 75: #Left arrow
+        #         data = [-100, 100]
+        #     elif key == 77: #Right arrow
+        #         data = [100, -100]
+        # else:
+        #     data = [0, 0]
+        # return data
 
 def main(args=None):
     rclpy.init(args=args)

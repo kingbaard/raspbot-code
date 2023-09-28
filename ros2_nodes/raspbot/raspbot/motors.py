@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import Int32MultiArray
+from std_msgs.msg import Int32MultiArray, Bool
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import TwistStamped
 
@@ -64,16 +64,6 @@ class Car:
         data = [servo_id, angle]
         self.__write_array(register, data)
 
-    def drive_square(self):
-      for i in range(4):
-        # Drive forward
-        self.control_car(100,100)
-        time.sleep(3)
-        # Turn left
-        self.control_car(-100,100)
-        time.sleep(1)
-      self.control_car(0,0)
-
 
 class MinimalSubscriber(Node):
   def __init__(self):
@@ -82,6 +72,7 @@ class MinimalSubscriber(Node):
     self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
     self.servo_subscription = self.create_subscription(Int32MultiArray, '/servo_control', self.servo_callback, 10)
     self.keyboard_subscription = self.create_subscription(Int32MultiArray, '/keyboard_control', self.keyboard_callback, 10)
+    self.drive_square_subscription = self.create_subscription(Bool, '/drive_square_control', self.drive_square_callback, 10)
     self.servo1_angle = -1
     self.servo2_angle = -1
   
@@ -98,6 +89,16 @@ class MinimalSubscriber(Node):
 
   def keyboard_callback(self, msg):
      self.car.control_car(msg.data[0], msg.data[1])
+
+  def drive_square_callback(self, msg):
+    for _ in range(4):
+      # Drive forward
+      self.car.control_car(100,100)
+      time.sleep(3)
+      # Turn left
+      self.car.control_car(-100,100)
+      time.sleep(1)
+    self.car.control_car(0,0)
 
 def main(args=None):
   rclpy.init(args=args)
