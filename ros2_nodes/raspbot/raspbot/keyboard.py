@@ -1,4 +1,3 @@
-import msvcrt
 import rclpy
 from rclpy.node import Node
 
@@ -6,13 +5,16 @@ from std_msgs.msg import Int32MultiArray
 import smbus
 import time
 import math
+import msvcrt
 
 class KeyboardPublisher(Node):
     def __init__(self):
         super().__init__('keyboard_publisher')
         self.publisher = self.create_publisher(Int32MultiArray, 'keyboard', 10)
+        timer_period = 0.1 # seconds between scans
+        self.timer = self.create_timer(timer_period, self.timer_callback)
 
-    def keyboard_callback(self):
+    def timer_callback(self):
         msg = Int32MultiArray()
         msg.data = self.get_direction()
         self.publisher.publish(msg)
