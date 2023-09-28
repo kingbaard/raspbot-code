@@ -23,6 +23,7 @@ setup(
             'motors = raspbot.motors:main',
             'sonar = raspbot.sonar:main',
             'camera = raspbot.camera:main',
+            'keyboard = raspbot.keyboard:main',
         ],
     },
 )

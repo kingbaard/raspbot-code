@@ -64,6 +64,16 @@ class Car:
         data = [servo_id, angle]
         self.__write_array(register, data)
 
+    def drive_square(self):
+      for i in range(4):
+        # Drive forward
+        self.control_car(100,100)
+        time.sleep(3)
+        # Turn left
+        self.control_car(-100,100)
+        time.sleep(1)
+      self.control_car(0,0)
+
 
 class MinimalSubscriber(Node):
   def __init__(self):
