@@ -14,24 +14,24 @@ class KeyboardPublisher(Node):
 
     def keyboard_callback(self):
         msg = Int32MultiArray()
-        msg.data = [0, 0]
+        msg.data = self.get_direction()
+        self.publisher.publish(msg)
+
+    def get_direction(self):
         key = ord(msvcrt.getwch())
-        if key == 27: #ESC
-            msg.data = [0, 0]
-        elif key == 224: #Special keys (arrows, f keys, ins, del, etc.)
+        if key == 224: #Special keys (arrows, f keys, ins, del, etc.)
             key = ord(msvcrt.getwch())
             if key == 72: #Up arrow
-                msg.data = [100, 100]
+                data = [100, 100]
             elif key == 80: #Down arrow
-                msg.data = [-100, -100]
+                data = [-100, -100]
             elif key == 75: #Left arrow
-                msg.data = [-100, 100]
+                data = [-100, 100]
             elif key == 77: #Right arrow
-                msg.data = [100, -100]
+                data = [100, -100]
         else:
-            msg.data = [0, 0]
-        
-        self.publisher.publish(msg)
+            data = [0, 0]
+        return data
 
 def main(args=None):
     rclpy.init(args=args)
