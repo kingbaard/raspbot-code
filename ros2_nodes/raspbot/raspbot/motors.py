@@ -9,6 +9,13 @@ import smbus
 import time
 import math
 
+# Car speed 
+# Power | Speed m/s
+# 50    | .16
+# 100   | .42
+# 200   | .765
+# 1     | .0042 ish?
+
 class Car:
     def __init__(self):
         self._addr = 0x16
@@ -91,13 +98,15 @@ class MinimalSubscriber(Node):
      self.car.control_car(msg.data[0], msg.data[1])
 
   def drive_square_callback(self, msg):
-    for _ in range(4):
-      # Drive forward
-      self.car.control_car(100,100)
-      time.sleep(3)
-      # Turn left
-      self.car.control_car(-100,100)
-      time.sleep(1)
+    if (msg.data):
+      for _ in range(4):
+        # Drive forward
+        self.car.control_car(100,100)
+        time.sleep(3)
+        # Turn left
+        self.car.control_car(-100,100)
+        time.sleep(2)
+
     self.car.control_car(0,0)
 
 def main(args=None):

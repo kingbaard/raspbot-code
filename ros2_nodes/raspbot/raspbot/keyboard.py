@@ -5,7 +5,7 @@ from std_msgs.msg import Int32MultiArray
 import smbus
 import time
 import math
-import pynput
+from pynput import keyboard
 
 class KeyboardPublisher(Node):
     def __init__(self):
@@ -14,28 +14,32 @@ class KeyboardPublisher(Node):
         timer_period = 0.1 # seconds between scans
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
+        listener = keyboard.Listener(
+            on_press=self.on_press,
+            on_release=self.on_release)
+        listener.start()
+
+    def on_press(self, key):
+        print('key {0} pressed'.format(key.char))
+        match key.char:
+            case 'w':   # forward
+                self.data = [100, 100]
+            case 'a':   # left
+                self.data = [-100, 100]
+            case 's':   # back
+                self.data = [-100, -100]
+            case 'd':   # right
+                self.data = [100, -100]
+            case _:     # default
+                self.data = [0, 0]
+
+    def on_release(self, key):
+        self.data = [0, 0]
+
     def timer_callback(self):
         msg = Int32MultiArray()
-        msg.data = self.get_direction()
+        msg.data = self.data
         self.publisher.publish(msg)
-
-    def get_direction(self):
-        # TODO: make work with pynput
-        pass
-        # key = ord(msvcrt.getwch())
-        # if key == 224: #Special keys (arrows, f keys, ins, del, etc.)
-        #     key = ord(msvcrt.getwch())
-        #     if key == 72: #Up arrow
-        #         data = [100, 100]
-        #     elif key == 80: #Down arrow
-        #         data = [-100, -100]
-        #     elif key == 75: #Left arrow
-        #         data = [-100, 100]
-        #     elif key == 77: #Right arrow
-        #         data = [100, -100]
-        # else:
-        #     data = [0, 0]
-        # return data
 
 def main(args=None):
     rclpy.init(args=args)
