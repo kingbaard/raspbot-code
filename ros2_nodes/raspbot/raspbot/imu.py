@@ -135,12 +135,12 @@ class ImuPublisher(Node):
         # pose_msg.header.stamp = time.time()
         # pose_msg.header.frame_id = 'map'
 
-        pose_msg.position.x = self.x
-        pose_msg.position.y = self.y
-        pose_msg.position.z = 0
+        pose_msg.pose.position.x = self.x
+        pose_msg.pose.position.y = self.y
+        pose_msg.pose.position.z = 0
 
-        pose_msg.orientation.z = sin(self.heading/2)
-        pose_msg.orientation.w = cos(self.heading/2)
+        pose_msg.pose.quaternion.z = sin(self.heading/2)
+        pose_msg.pose.quaternion.w = cos(self.heading/2)
 
         self.position_publisher.publish(pose_msg)
 
