@@ -69,10 +69,10 @@ def save_pos_plot(pos_hist):
     x, y = zip(*pos_hist)
     plt.plot(x, y, linewidth=1)
     
-    savedirectory = ".\\imu_log\\" + time.strftime("%d-%m-%Y-%H-%S", time.localtime())
+    savedirectory = "./imu_log/" + time.strftime("%d-%m-%Y-%H-%S", time.localtime())
     if not os.path.isdir(savedirectory):
         os.makedirs(savedirectory)
-    plt.savefig
+    plt.savefig(f"{savedirectory}/posPlot.png")
 
 class ImuPublisher(Node):
     def __init__(self):
