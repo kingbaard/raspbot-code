@@ -90,6 +90,7 @@ class ImuPublisher(Node):
         # self.seq = 1
 
     def motor_callback(self, msg):
+        print("top of motor_callback")
         current_time = time.time()
         if self.last_time:
             delta_time = current_time - self.last_time
