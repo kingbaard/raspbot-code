@@ -16,7 +16,6 @@ class KeyboardPublisher(Node):
 
     def get_data(self):
         key = getch.getche()
-        key = key.to_lower()
         match key:
             case 'w':   # forward
                 data = [100, 100]
