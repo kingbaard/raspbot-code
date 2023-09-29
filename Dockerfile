@@ -8,7 +8,7 @@ RUN apt-get install -y python3-pip build-essential libcap-dev
 RUN apt-get update && apt-get install -y ros-humble-cv-bridge
 RUN pip3 install rpi.gpio
 RUN pip3 install smbus
-RUN pip3 install inputs
+RUN pip3 install getch
 RUN pip3 install matplotlib
 
 # Create workspace
