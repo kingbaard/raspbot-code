@@ -6,7 +6,7 @@ from std_msgs.msg import Int32MultiArray, Bool
 from geometry_msgs.msg import PoseStamped
 
 from numpy import sin, cos
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import smbus
 import time
 import math
@@ -27,58 +27,58 @@ import os
 
 
 
-# def calculate_imu_hist(motor_hist):
-#     pos_hist = [(float(0), float(0))] # meters (xPos: float, yPos: float)
-#     heading_hist = [0] #rads
-#     for i in range(1, len(motor_hist)):
-#         time_difference = motor_hist[i + 1][0] - motor_hist[i][0]
-#         power_l = motor_hist[i][1]
-#         power_r = motor_hist[i][2]
+def calculate_imu_hist(motor_hist):
+    pos_hist = [(float(0), float(0))] # meters (xPos: float, yPos: float)
+    heading_hist = [0] #rads
+    for i in range(1, len(motor_hist)):
+        time_difference = motor_hist[i + 1][0] - motor_hist[i][0]
+        power_l = motor_hist[i][1]
+        power_r = motor_hist[i][2]
 
-#         # Find new heading
-#         angular_v = 0
-#         if power_l < power_r:
-#             angular_v = -0.785398
-#         elif power_l > power_r:
-#             angular_v = 0.785398
-#         heading = heading + (angular_v * time_difference)
+        # Find new heading
+        angular_v = 0
+        if power_l < power_r:
+            angular_v = -0.785398
+        elif power_l > power_r:
+            angular_v = 0.785398
+        heading = heading + (angular_v * time_difference)
 
-#         # Find distance traveled
-#         x_d = 0
-#         y_d = 0
-#         if power_r == power_l:
-#             velocity = 0.0052 * power_r - 0.1
-#             x_d = velocity * sin(heading) *  time_difference
-#             y_d = velocity * cos(heading) *  time_difference
+        # Find distance traveled
+        x_d = 0
+        y_d = 0
+        if power_r == power_l:
+            velocity = 0.0052 * power_r - 0.1
+            x_d = velocity * sin(heading) *  time_difference
+            y_d = velocity * cos(heading) *  time_difference
 
-#         new_x = pos_hist[i-1][0] + x_d
-#         new_y = pos_hist[i-1][1] + y_d
+        new_x = pos_hist[i-1][0] + x_d
+        new_y = pos_hist[i-1][1] + y_d
 
-#         pos_hist.append(new_x, new_y)
-#         heading_hist.append(heading)
+        pos_hist.append(new_x, new_y)
+        heading_hist.append(heading)
 
-#     return (pos_hist, heading_hist)
+    return (pos_hist, heading_hist)
 
-# def save_pos_plot(pos_hist):
-#     print("Saving imu pos plot")
-#     fig, ax = plt.subplots()
+def save_pos_plot(pos_hist):
+    print("Saving imu pos plot")
+    fig, ax = plt.subplots()
 
-#     ax.set_xlim(-20, 20)
-#     ax.set_ylim(-20, 20)
-#     ax.set_aspect('equal', 'box')
+    ax.set_xlim(-20, 20)
+    ax.set_ylim(-20, 20)
+    ax.set_aspect('equal', 'box')
 
-#     #Plot origin point
-#     plt.scatter(0, 0, marker='x', color='red')
+    #Plot origin point
+    plt.scatter(0, 0, marker='x', color='red')
 
-#     #Plot path
-#     x, y = zip(*pos_hist)
-#     plt.plot(x, y, linewidth=1)
+    #Plot path
+    x, y = zip(*pos_hist)
+    plt.plot(x, y, linewidth=1)
 
-#     savedirectory = "./imu_log/" + time.strftime("%d-%m-%Y-%H-%S", time.localtime())
-#     if not os.path.isdir(savedirectory):
-#         os.makedirs(savedirectory)
-#     plt.savefig(f"{savedirectory}/posPlot.png")
-#     print(f"saved to {savedirectory}")
+    savedirectory = "./imu_log/" + time.strftime("%d-%m-%Y-%H-%S", time.localtime())
+    if not os.path.isdir(savedirectory):
+        os.makedirs(savedirectory)
+    plt.savefig(f"{savedirectory}/posPlot.png")
+    print(f"saved to {savedirectory}")
 
 class ImuPublisher(Node):
     def __init__(self):
@@ -136,7 +136,7 @@ class ImuPublisher(Node):
         # pose_msg.header.seq = self.seq
         # self.seq += 1
         # pose_msg.header.stamp = time.time()
-        # pose_msg.header.frame_id = 'map'
+        pose_msg.header.frame_id = 'map'
 
         pose_msg.pose.position.x = float(self.x)
         pose_msg.pose.position.y = float(self.y)
