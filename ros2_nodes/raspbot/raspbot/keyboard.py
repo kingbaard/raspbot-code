@@ -10,7 +10,7 @@ import getch
 class KeyboardPublisher(Node):
     def __init__(self):
         super().__init__('keyboard_publisher')
-        self.publisher = self.create_publisher(Int32MultiArray, 'keyboard', 10)
+        self.publisher = self.create_publisher(Int32MultiArray, 'keyboard_control', 10)
         timer_period = 0.1 # seconds between scans
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
