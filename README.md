@@ -34,7 +34,7 @@ docker run -it --rm --privileged -v ${PWD}/ros2_nodes:/root/ros2_ws/src humble
 - Run: ```source src/source.sh```
 - Run motors first. It must be running for any of the following to run.
   - ```ros2 run raspbot motors```
-- To run keyboard controls:
+- To run keyboard controls (wasd for movement and any other key to stop moving):
   - ```ros2 run raspbot keyboard```
 - To run square:
   - ```ros2 topic pub /drive_square_control std_msgs/msg/Bool "{ data: True }" --once```
@@ -44,5 +44,5 @@ docker run -it --rm --privileged -v ${PWD}/ros2_nodes:/root/ros2_ws/src humble
     - ```ros2 run raspbot imu```
     - ```ros2 bag record position```
     - Then run the command to run the square.
-  - You will now have the imu information will be in the same directory as you ran the record in.
+  - You will now have the imu information in the same directory as you ran the record in.
   - You may export this data with docker cp and scp.
