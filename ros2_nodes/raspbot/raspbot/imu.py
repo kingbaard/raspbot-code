@@ -118,7 +118,9 @@ class ImuPublisher(Node):
                 angular_velocity = -0.785398
             elif msg.data[0] > 0:
                 angular_velocity = 0.785398
-            self.heading += angular_velocity * delta_time
+            delta = angular_velocity * delta_time
+            print(delta)
+            self.heading += delta
 
         self.last_time = current_time
 
