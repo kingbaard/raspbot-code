@@ -139,8 +139,9 @@ class ImuPublisher(Node):
 
 def main(args=None):
     rclpy.init(args=args)
+    print("creating imuPublisher")
     imuPublisher = ImuPublisher()
-
+    print("finished creating imuPublisher")
     try:
         rclpy.spin(imuPublisher)
     except Exception as e:
