@@ -139,8 +139,8 @@ class ImuPublisher(Node):
         pose_msg.pose.position.y = float(self.y)
         pose_msg.pose.position.z = float(0)
 
-        pose_msg.pose.quaternion.z = sin(self.heading/2)
-        pose_msg.pose.quaternion.w = cos(self.heading/2)
+        pose_msg.pose.orientation.z = sin(self.heading/2)
+        pose_msg.pose.orientation.w = cos(self.heading/2)
 
         self.position_publisher.publish(pose_msg)
 
