@@ -5,7 +5,7 @@ from std_msgs.msg import Int32MultiArray
 import smbus
 import time
 import math
-from pynput import keyboard
+from inputs import get_key
 
 class KeyboardPublisher(Node):
     def __init__(self):
@@ -14,31 +14,29 @@ class KeyboardPublisher(Node):
         timer_period = 0.1 # seconds between scans
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
-        listener = keyboard.Listener(
-            on_press=self.on_press,
-            on_release=self.on_release)
-        listener.start()
-
-    def on_press(self, key):
-        print('key {0} pressed'.format(key.char))
-        match key.char:
-            case 'w':   # forward
-                self.data = [100, 100]
-            case 'a':   # left
-                self.data = [-100, 100]
-            case 's':   # back
-                self.data = [-100, -100]
-            case 'd':   # right
-                self.data = [100, -100]
-            case _:     # default
-                self.data = [0, 0]
-
-    def on_release(self, key):
-        self.data = [0, 0]
+    def get_data(self):
+        event = get_key()
+        for e in event:
+            print(e.ev_type, e.code, e.state)
+        if (event.state):
+            match event.code:
+                case 'KEY_W':   # forward
+                    data = [100, 100]
+                case 'KEY_A':   # left
+                    data = [-100, 100]
+                case 'KEY_S':   # back
+                    data = [-100, -100]
+                case 'KEY_D':   # right
+                    data = [100, -100]
+                case _:     # default
+                    data = [0, 0]
+        else:
+            data = [0, 0]
+        return data
 
     def timer_callback(self):
         msg = Int32MultiArray()
-        msg.data = self.data
+        msg.data = self.get_data()
         self.publisher.publish(msg)
 
 def main(args=None):
