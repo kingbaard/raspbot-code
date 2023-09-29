@@ -102,7 +102,7 @@ class ImuPublisher(Node):
 
         #Find distance traveled if not turning
         if msg.data[0] == msg.data[1]:
-            velocity = 0.0052 * msg[0] - 0.1
+            velocity = 0.0052 * msg.data[0] - 0.1
             x_d = velocity * sin(self.heading) * delta_time
             y_d = velocity * cos(self.heading) *  delta_time
 
