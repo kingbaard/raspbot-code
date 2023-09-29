@@ -2,7 +2,7 @@ import rclpy
 from rclpy.node import Node
 
 from std_msgs.msg import Int32MultiArray, Bool
-from geometry.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped
 
 from numpy import sin, cos
 import matplotlib.pyplot as plt
