@@ -110,9 +110,8 @@ class ImuPublisher(Node):
 
             self.x += x_d
             self.y += y_d
-
+        else:
         #Find change in heading if turning
-        if abs(msg.data[0] - msg.data[1] > 10):
             angular_velocity = 0
             if msg.data[0] < 0:
                 angular_velocity = -0.785398
