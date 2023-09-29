@@ -102,9 +102,9 @@ class ImuPublisher(Node):
         #Find change in heading if turning
         if abs(msg[0] - msg[1] > 10):
             angular_velocity = 0
-            if msg[0] == -100 and msg[1] == 100:
+            if msg[0] == -100 and msg[1] == 50:
                 angular_velocity = -0.785398
-            elif msg[0] == 100 and msg[1] == -100:
+            elif msg[0] == 50 and msg[1] == -100:
                 angular_velocity = 0.785398
             self.heading += angular_velocity * delta_time
         
@@ -129,13 +129,10 @@ class ImuPublisher(Node):
         pose_msg.pose.orientation.w = cos(self.heading/2)
 
         self.position_publisher.publish(pose_msg)
-
-
             
 
 def main(args=None):
     rclpy.init(args=args)
-  
     imuPublisher = ImuPublisher()
 
     try:
