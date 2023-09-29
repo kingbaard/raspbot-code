@@ -24,6 +24,7 @@ setup(
             'sonar = raspbot.sonar:main',
             'camera = raspbot.camera:main',
             'keyboard = raspbot.keyboard:main',
+            'imu = raspbot.imu:main'
         ],
     },
 )
