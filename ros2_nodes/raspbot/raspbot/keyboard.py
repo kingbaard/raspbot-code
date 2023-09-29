@@ -15,7 +15,7 @@ class KeyboardPublisher(Node):
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
     def get_data(self):
-        key = getch.getche()
+        key = getch.getch()
         key = key.lower()
         match key:
             case 'w':   # forward
