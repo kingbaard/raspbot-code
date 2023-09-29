@@ -1,5 +1,6 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.lifecycle import TransitionCallbackReturn
 
 from std_msgs.msg import Int32MultiArray, Bool
 from geometry_msgs.msg import PoseStamped
@@ -22,6 +23,9 @@ import os
 # Angular Velocity
 # lPower    | rPower    | Angular v rad/s
 # -100      | 100       | 0.785398
+
+
+    
 
 def calculate_imu_hist(motor_hist):
     pos_hist = [(float(0), float(0))] # meters (xPos: float, yPos: float)
@@ -135,6 +139,15 @@ class ImuPublisher(Node):
         pose_msg.pose.orientation.w = cos(self.heading/2)
 
         self.position_publisher.publish(pose_msg)
+
+    def on_shutdown(self, state):
+        pos_hist, _ = calculate_imu_hist(self.hist)
+        save_pos_plot(pos_hist)
+    
+        imuPublisher.destroy_node()
+        rclpy.shutdown()
+
+        return TransitionCallbackReturn.SUCCESS
             
 
 def main(args=None):
