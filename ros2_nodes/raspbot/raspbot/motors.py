@@ -2,8 +2,6 @@ import rclpy
 from rclpy.node import Node
 
 from std_msgs.msg import Int32MultiArray, Bool
-from geometry_msgs.msg import Twist
-from geometry_msgs.msg import TwistStamped
 
 import smbus
 import time
@@ -101,10 +99,10 @@ class MinimalSubscriber(Node):
     if (msg.data):
       for _ in range(4):
         # Drive forward
-        self.car.control_car(100,100)
+        self.car.control_car(50, 50)
         time.sleep(3)
         # Turn left
-        self.car.control_car(-100,100)
+        self.car.control_car(-100, 50)
         time.sleep(2)
 
     self.car.control_car(0,0)
