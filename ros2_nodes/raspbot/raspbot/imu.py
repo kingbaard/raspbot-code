@@ -91,7 +91,7 @@ class ImuPublisher(Node):
         timer_period = 0.1 # seconds between scans
         self.last_time = time.time()
         self.timer = self.create_timer(timer_period, self.publish_pose)
-        self.position_publisher = self.create_publisher(PoseStamped, '/position', 10)
+        self.position_publisher = self.create_publisher(PoseStamped, 'position', 10)
         self.seq = 1
 
     def motor_callback(self, msg):
@@ -135,12 +135,12 @@ class ImuPublisher(Node):
         pose_msg.header.stamp = time.time()
         # pose_msg.header.frame_id = 'map'
 
-        pose_msg.pose.position.x = self.x
-        pose_msg.pose.position.y = self.y
-        pose_msg.pose.position.z = 0
+        pose_msg.position.x = self.x
+        pose_msg.position.y = self.y
+        pose_msg.position.z = 0
 
-        pose_msg.pose.orientation.z = sin(self.heading/2)
-        pose_msg.pose.orientation.w = cos(self.heading/2)
+        pose_msg.orientation.z = sin(self.heading/2)
+        pose_msg.orientation.w = cos(self.heading/2)
 
         self.position_publisher.publish(pose_msg)
 
