@@ -85,9 +85,9 @@ class ImuPublisher(Node):
         self.hist = []
         self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
         timer_period = 0.1 # seconds between scans
-        self.timer = self.create_timer(timer_period, self.publish_pose)
-        self.position_publisher = self.create_publisher(PoseStamped, '/position', 10)
-        self.seq = 1
+        # self.timer = self.create_timer(timer_period, self.publish_pose)
+        # self.position_publisher = self.create_publisher(PoseStamped, '/position', 10)
+        # self.seq = 1
 
     def motor_callback(self, msg):
         current_time = time.time()
