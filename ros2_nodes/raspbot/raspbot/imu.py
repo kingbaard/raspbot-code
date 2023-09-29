@@ -135,7 +135,7 @@ class ImuPublisher(Node):
 
         # pose_msg.header.seq = self.seq
         # self.seq += 1
-        # pose_msg.header.stamp = time.time()
+        pose_msg.header.stamp = self.get_clock().now()
         pose_msg.header.frame_id = 'map'
 
         pose_msg.pose.position.x = float(self.x)
