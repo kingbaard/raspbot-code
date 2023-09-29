@@ -5,7 +5,7 @@ from std_msgs.msg import Int32MultiArray
 import smbus
 import time
 import math
-from inputs import get_key
+import getch
 
 class KeyboardPublisher(Node):
     def __init__(self):
@@ -15,23 +15,19 @@ class KeyboardPublisher(Node):
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
     def get_data(self):
-        event = get_key()
-        for e in event:
-            print(e.ev_type, e.code, e.state)
-        if (event.state):
-            match event.code:
-                case 'KEY_W':   # forward
-                    data = [100, 100]
-                case 'KEY_A':   # left
-                    data = [-100, 100]
-                case 'KEY_S':   # back
-                    data = [-100, -100]
-                case 'KEY_D':   # right
-                    data = [100, -100]
-                case _:     # default
-                    data = [0, 0]
-        else:
-            data = [0, 0]
+        key = getch.getche()
+        key = key.to_lower()
+        match key:
+            case 'w':   # forward
+                data = [100, 100]
+            case 'a':   # left
+                data = [-100, 100]
+            case 's':   # back
+                data = [-100, -100]
+            case 'd':   # right
+                data = [100, -100]
+            case _:     # default
+                data = [0, 0]
         return data
 
     def timer_callback(self):
