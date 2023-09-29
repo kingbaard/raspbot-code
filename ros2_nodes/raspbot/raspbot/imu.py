@@ -12,7 +12,7 @@ import time
 import math
 import os
 
-# Car speed 
+# Car speed
 # Power | Speed m/s
 # 50    | .16
 # 100   | .42
@@ -25,7 +25,7 @@ import os
 # -100      | 100       | 0.785398
 
 
-    
+
 
 def calculate_imu_hist(motor_hist):
     pos_hist = [(float(0), float(0))] # meters (xPos: float, yPos: float)
@@ -68,12 +68,12 @@ def save_pos_plot(pos_hist):
     ax.set_aspect('equal', 'box')
 
     #Plot origin point
-    plt.scatter(0, 0, marker='x', color='red')  
+    plt.scatter(0, 0, marker='x', color='red')
 
     #Plot path
     x, y = zip(*pos_hist)
     plt.plot(x, y, linewidth=1)
-    
+
     savedirectory = "./imu_log/" + time.strftime("%d-%m-%Y-%H-%S", time.localtime())
     if not os.path.isdir(savedirectory):
         os.makedirs(savedirectory)
@@ -101,35 +101,35 @@ class ImuPublisher(Node):
             delta_time = current_time - self.last_time
 
         #Find distance traveled if not turning
-        if msg[0] == msg[1]:
+        if msg.data[0] == msg.data[1]:
             velocity = 0.0052 * msg[0] - 0.1
             x_d = velocity * sin(self.heading) * delta_time
             y_d = velocity * cos(self.heading) *  delta_time
 
             self.x += x_d
             self.y += y_d
-        
+
         #Find change in heading if turning
-        if abs(msg[0] - msg[1] > 10):
+        if abs(msg.data[0] - msg.data[1] > 10):
             angular_velocity = 0
-            if msg[0] == -100 and msg[1] == 50:
+            if msg.data[0] == -100 and msg.data[1] == 50:
                 angular_velocity = -0.785398
-            elif msg[0] == 50 and msg[1] == -100:
+            elif msg.data[0] == 50 and msg.data[1] == -100:
                 angular_velocity = 0.785398
             self.heading += angular_velocity * delta_time
-        
+
         self.last_time = current_time
 
         # For post viz
-        print(f"Appending msg[0]:{msg[0]} and msg[1]:{msg[1]} to hist...")
-        self.hist.append(msg[0], msg[1], current_time)
+        print(f"Appending msg[0]:{msg.data[0]} and msg[1]:{msg.data[1]} to hist...")
+        self.hist.append(msg.data[0], msg.data[1], current_time)
 
         pos_hist, _ = calculate_imu_hist(self.hist)
         save_pos_plot(pos_hist)
 
     def publish_pose(self):
         pose_msg = PoseStamped()
-        
+
         pose_msg.header.seq = self.seq
         self.seq += 1
         pose_msg.header.stamp = time.time()
@@ -144,7 +144,7 @@ class ImuPublisher(Node):
 
         self.position_publisher.publish(pose_msg)
 
-            
+
 
 def main(args=None):
     rclpy.init(args=args)
