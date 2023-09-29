@@ -122,7 +122,7 @@ class ImuPublisher(Node):
 
         # For post viz
         print(f"Appending msg[0]:{msg.data[0]} and msg[1]:{msg.data[1]} to hist...")
-        self.hist.append(msg.data[0], msg.data[1], current_time)
+        self.hist.append((msg.data[0], msg.data[1], current_time))
 
         pos_hist, _ = calculate_imu_hist(self.hist)
         save_pos_plot(pos_hist)
