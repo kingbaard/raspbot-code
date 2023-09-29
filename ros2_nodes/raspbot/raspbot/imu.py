@@ -114,9 +114,9 @@ class ImuPublisher(Node):
         #Find change in heading if turning
         if abs(msg.data[0] - msg.data[1] > 10):
             angular_velocity = 0
-            if msg.data[0] == -100 and msg.data[1] == 50:
+            if msg.data[0] < 0:
                 angular_velocity = -0.785398
-            elif msg.data[0] == 50 and msg.data[1] == -100:
+            elif msg.data[0] > 0:
                 angular_velocity = 0.785398
             self.heading += angular_velocity * delta_time
 
