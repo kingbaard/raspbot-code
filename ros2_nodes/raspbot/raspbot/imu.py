@@ -26,8 +26,8 @@ import os
 def calculate_imu_hist(motor_hist):
     pos_hist = [(float(0), float(0))] # meters (xPos: float, yPos: float)
     heading_hist = [0] #rads
-    for i in range(1, len(self.motor_hist)):
-        time_difference = self.motor_hist[i + 1][0] - motor_hist[i][0]
+    for i in range(1, len(motor_hist)):
+        time_difference = motor_hist[i + 1][0] - motor_hist[i][0]
         power_l = motor_hist[i][1]
         power_r = motor_hist[i][2]
 
