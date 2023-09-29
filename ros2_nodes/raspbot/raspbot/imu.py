@@ -56,6 +56,7 @@ def calculate_imu_hist(motor_hist):
     return (pos_hist, heading_hist)
 
 def save_pos_plot(pos_hist):
+    print("Saving imu pos plot")
     fig, ax = plt.subplots()
 
     ax.set_xlim(-20, 20)
@@ -73,6 +74,7 @@ def save_pos_plot(pos_hist):
     if not os.path.isdir(savedirectory):
         os.makedirs(savedirectory)
     plt.savefig(f"{savedirectory}/posPlot.png")
+    print(f"saved to {savedirectory}")
 
 class ImuPublisher(Node):
     def __init__(self):
@@ -111,6 +113,7 @@ class ImuPublisher(Node):
         self.last_time = current_time
 
         # For post viz
+        print(f"Appending msg[0]:{msg[0]} and msg[1]:{msg[1]} to hist...")
         self.hist.append(msg[0], msg[1], current_time)
 
     def publish_pose(self):
