@@ -76,7 +76,7 @@ class MinimalSubscriber(Node):
     self.car = Car()
     self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
     self.servo_subscription = self.create_subscription(Int32MultiArray, '/servo_control', self.servo_callback, 10)
-    self.keyboard_subscription = self.create_subscription(Int32MultiArray, '/keyboard_control', self.keyboard_callback, 10)
+    # self.keyboard_subscription = self.create_subscription(Int32MultiArray, '/keyboard_control', self.keyboard_callback, 10)
     self.drive_square_subscription = self.create_subscription(Bool, '/drive_square_control', self.drive_square_callback, 10)
     self.servo1_angle = -1
     self.servo2_angle = -1
