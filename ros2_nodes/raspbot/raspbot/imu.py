@@ -85,11 +85,12 @@ class ImuPublisher(Node):
         self.hist = []
         self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
         timer_period = 0.1 # seconds between scans
-        self.timer = self.create_timer(timer_period, self.publish_pose)
-        self.position_publisher = self.create_publisher(PoseStamped, '/position', 10)
-        self.seq = 1
+        # self.timer = self.create_timer(timer_period, self.publish_pose)
+        # self.position_publisher = self.create_publisher(PoseStamped, '/position', 10)
+        # self.seq = 1
 
     def motor_callback(self, msg):
+        print("top of motor_callback")
         current_time = time.time()
         if self.last_time:
             delta_time = current_time - self.last_time
@@ -138,8 +139,9 @@ class ImuPublisher(Node):
 
 def main(args=None):
     rclpy.init(args=args)
+    print("creating imuPublisher")
     imuPublisher = ImuPublisher()
-
+    print("finished creating imuPublisher")
     try:
         rclpy.spin(imuPublisher)
     except Exception as e:
