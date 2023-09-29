@@ -84,6 +84,8 @@ class ImuPublisher(Node):
         self.heading = 0
         self.hist = []
         self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
+        timer_period = 0.1 # seconds between scans
+        self.timer = self.create_timer(timer_period, self.timer_callback)
         self.position_publisher = self.create_publisher(PoseStamped, '/position', 10)
         self.seq = 1
 
