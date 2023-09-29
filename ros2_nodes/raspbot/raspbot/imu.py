@@ -6,7 +6,7 @@ from std_msgs.msg import Int32MultiArray, Bool
 from geometry_msgs.msg import PoseStamped
 
 from numpy import sin, cos
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import smbus
 import time
 import math
