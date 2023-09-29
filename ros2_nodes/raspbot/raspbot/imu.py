@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import smbus
 import time
 import math
+import os
 
 # Car speed 
 # Power | Speed m/s
@@ -22,10 +23,60 @@ import math
 # lPower    | rPower    | Angular v rad/s
 # -100      | 100       | 0.785398
 
+def calculate_imu_hist(motor_hist):
+    pos_hist = [(float(0), float(0))] # meters (xPos: float, yPos: float)
+    heading_hist = [0] #rads
+    for i in range(1, len(self.motor_hist)):
+        time_difference = self.motor_hist[i + 1][0] - self.motor_hist[i][0]
+        power_l = self.motor_hist[i][1]
+        power_r = self.motor_hist[i][2]
+
+        # Find new heading
+        angular_v = 0
+        if power_l < power_r:
+            angular_v = -0.785398
+        elif power_l > power_r:
+            angular_v = 0.785398
+        heading = heading + (angular_v * time_difference)
+
+        # Find distance traveled
+        x_d = 0
+        y_d = 0
+        if power_r == power_l:
+            velocity = 0.0052 * power_r - 0.1
+            x_d = velocity * sin(heading) *  time_difference
+            y_d = velocity * cos(heading) *  time_difference
+
+        new_x = pos_hist[i-1][0] + x_d
+        new_y = pos_hist[i-1][1] + y_d
+
+        pos_hist.append(new_x, new_y)
+        heading_hist.append(heading)
+
+    return (pos_hist, heading_hist)
+
+def save_pos_plot(pos_hist):
+    fig, ax = plt.subplots()
+
+    ax.set_xlim(-20, 20)
+    ax.set_ylim(-20, 20)
+    ax.set_aspect('equal', 'box')
+
+    #Plot origin point
+    plt.scatter(0, 0, marker='x', color='red')  
+
+    #Plot path
+    x, y = zip(*pos_hist)
+    plt.plot(x, y, linewidth=1)
+    
+    savedirectory = ".\\imu_log\\" + time.strftime("%d-%m-%Y-%H-%S", time.localtime())
+    if not os.path.isdir(savedirectory):
+        os.makedirs(savedirectory)
+    plt.savefig
+
 class ImuPublisher(Node):
     def __init__(self):
         super().__init__('imu')
-        #Create log
         self.x = 0
         self.y = 0
         self.heading = 0
@@ -49,7 +100,6 @@ class ImuPublisher(Node):
             self.y += y_d
         
         #Find change in heading if turning
-        # Currently only accounts for turns where one motor is set to 100 and the other to -100
         if abs(msg[0] - msg[1] > 10):
             angular_velocity = 0
             if msg[0] == -100 and msg[1] == 100:
@@ -59,6 +109,9 @@ class ImuPublisher(Node):
             self.heading += angular_velocity * delta_time
         
         self.last_time = current_time
+
+        # For post viz
+        self.hist.append(msg[0], msg[1], current_time)
 
     def publish_pose(self):
         pose_msg = PoseStamped()
@@ -89,6 +142,9 @@ def main(args=None):
         rclpy.spin(imuPublisher)
     except Exception as e:
         print(e)
+
+    pos_hist, _ = calculate_imu_hist(imuPublisher.hist)
+    save_pos_plot(pos_hist)
 
     imuPublisher.destroy_node()
     rclpy.shutdown()
