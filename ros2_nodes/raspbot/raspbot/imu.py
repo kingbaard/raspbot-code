@@ -142,7 +142,7 @@ def main(args=None):
         rclpy.spin(imuPublisher)
     except Exception as e:
         print(e)
-
+    print("post try block")
     pos_hist, _ = calculate_imu_hist(imuPublisher.hist)
     save_pos_plot(pos_hist)
 
