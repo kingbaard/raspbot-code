@@ -78,6 +78,7 @@ class MinimalSubscriber(Node):
     self.servo_subscription = self.create_subscription(Int32MultiArray, '/servo_control', self.servo_callback, 10)
     self.keyboard_subscription = self.create_subscription(Int32MultiArray, '/keyboard_control', self.keyboard_callback, 10)
     self.drive_square_subscription = self.create_subscription(Bool, '/drive_square_control', self.drive_square_callback, 10)
+    self.motor_publisher = self.create_publisher(Int32MultiArray, 'motor_control', 10)
     self.servo1_angle = -1
     self.servo2_angle = -1
   
@@ -96,16 +97,24 @@ class MinimalSubscriber(Node):
      self.car.control_car(msg.data[0], msg.data[1])
 
   def drive_square_callback(self, msg):
+    motor_msg = Int32MultiArray()
     if (msg.data):
       for _ in range(4):
         # Drive forward
-        self.car.control_car(50, 50)
+        motor_msg.data = [50, 50]
+        self.motor_publisher.publish(motor_msg)
+        # self.car.control_car(50, 50)
         time.sleep(3)
+
         # Turn left
-        self.car.control_car(-100, 50)
+        motor_msg.data = [-100, 50]
+        self.motor_publisher.publish(motor_msg)
+        # self.car.control_car(-100, 50)
         time.sleep(2)
 
-    self.car.control_car(0,0)
+    motor_msg.data = [0, 0]
+    self.motor_publisher.publish(motor_msg)
+    # self.car.control_car(0,0)
 
 def main(args=None):
   rclpy.init(args=args)
