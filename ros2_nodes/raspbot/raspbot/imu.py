@@ -123,6 +123,9 @@ class ImuPublisher(Node):
         print(f"Appending msg[0]:{msg[0]} and msg[1]:{msg[1]} to hist...")
         self.hist.append(msg[0], msg[1], current_time)
 
+        pos_hist, _ = calculate_imu_hist(self.hist)
+        save_pos_plot(pos_hist)
+
     def publish_pose(self):
         pose_msg = PoseStamped()
         
@@ -140,14 +143,6 @@ class ImuPublisher(Node):
 
         self.position_publisher.publish(pose_msg)
 
-    def on_shutdown(self, state):
-        pos_hist, _ = calculate_imu_hist(self.hist)
-        save_pos_plot(pos_hist)
-    
-        imuPublisher.destroy_node()
-        rclpy.shutdown()
-
-        return TransitionCallbackReturn.SUCCESS
             
 
 def main(args=None):
