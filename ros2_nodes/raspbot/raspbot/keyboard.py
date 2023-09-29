@@ -16,17 +16,22 @@ class KeyboardPublisher(Node):
 
     def get_data(self):
         key = getch.getche()
-        key = key.to_lower()
+        key = key.lower()
         match key:
             case 'w':   # forward
+                print("You pressed w!")
                 data = [100, 100]
             case 'a':   # left
+                print("You pressed a!")
                 data = [-100, 100]
             case 's':   # back
+                print("You pressed s!")
                 data = [-100, -100]
             case 'd':   # right
+                print("You pressed d!")
                 data = [100, -100]
             case _:     # default
+                print("You pressed something else!")
                 data = [0, 0]
         return data
 
