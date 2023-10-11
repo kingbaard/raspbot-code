@@ -24,7 +24,7 @@ RUN mkdir -p ~/ros2_ws/src
 
 # Setup .bashrc
 RUN touch /root/.bashrc \
-    && cat "source /root/ros2_ws/src/source.sh"
+    && echo "source /root/ros2_ws/src/source.sh" > /root/.bashrc
 
 COPY ./Car.py /root/
 COPY ./Ultrasonic.py /root/
