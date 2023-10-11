@@ -17,12 +17,14 @@ RUN pip3 install matplotlib
 RUN usermod -aG video root
 # RUN apt-get install -y raspi-config
 
-# Setup .bashrc
-RUN touch /root/.bashrc \
-    && cat "source /root/ros2_ws/src/source.sh"
 # Create workspace
 
 RUN mkdir -p ~/ros2_ws/src
+
+
+# Setup .bashrc
+RUN touch /root/.bashrc \
+    && cat "source /root/ros2_ws/src/source.sh"
 
 COPY ./Car.py /root/
 COPY ./Ultrasonic.py /root/
