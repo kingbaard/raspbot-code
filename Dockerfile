@@ -15,7 +15,7 @@ RUN pip3 install matplotlib
 
 # Setup camera user
 RUN usermod -aG video root
-RUN apt-get install raspi-config
+RUN apt-get install -y raspi-config
 
 # Setup .bashrc
 RUN touch /root/.bashrc \
