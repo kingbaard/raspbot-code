@@ -49,7 +49,7 @@ class CameraListener(Node):
             self.video_writer = cv2.VideoWriter(
                 video_filename, fourcc, fps, (width, height))
             if not self.video_writer.isOpened():
-                input('closed!')
+                self.video_writer.open()
             print(type(self.video_writer))
             time.sleep(3)
         except Exception as e:
