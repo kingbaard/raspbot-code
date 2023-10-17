@@ -14,7 +14,7 @@ class CameraListener(Node):
         super().__init__('camera_listener')
         self.frame_count = 0
         self.image_subscription = self.create_subscription(
-            Image, '/image_raw', self.recorder_callback, 10)
+            Image, '/image_raw/compressed', self.recorder_callback, 10)
         self.video_writer = None
 
     def recorder_callback(self, image_msg):
