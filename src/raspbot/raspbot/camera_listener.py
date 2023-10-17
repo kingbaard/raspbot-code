@@ -29,11 +29,12 @@ class CameraListener(Node):
             self.video_writer.write(cv_image)
             print("vw.write called")
             self.frame_count += 1
-            if self.frame_count == 1000:
+            if self.frame_count == 100:
                 print("writing to file..")
                 self.frame_count = 0
                 self.video_writer.release()
                 self.video_writer = None
+                input('Stop!')
 
         except Exception as e:
             print('Error processing image: %s' % str(e))
