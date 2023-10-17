@@ -44,7 +44,7 @@ class CameraListener(Node):
             height, width, _ = image.shape
             video_format = 'mp4'  # or any other video format supported by OpenCV
             # video_filename = str(time.time()) + video_format
-            video_filename = "gaming" + video_format
+            video_filename = "gaming." + video_format
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
             fps = 30  # Frames per second
             self.video_writer = cv2.VideoWriter(
