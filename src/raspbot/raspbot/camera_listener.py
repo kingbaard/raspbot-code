@@ -29,7 +29,7 @@ class CameraListener(Node):
             self.video_writer.write(cv_image)
             print("vw.write called")
             self.frame_count += 1
-            if self.frame_count == 100:
+            if self.frame_count == 1000:
                 print("writing to file..")
                 self.frame_count = 0
                 self.video_writer.release()
