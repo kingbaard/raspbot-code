@@ -1,7 +1,7 @@
 import time
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, CompressedImage
 import cv_bridge
 import cv2
 import numpy as np
@@ -14,7 +14,7 @@ class CameraListener(Node):
         super().__init__('camera_listener')
         self.frame_count = 0
         self.image_subscription = self.create_subscription(
-            Image, '/image_raw/compressed', self.recorder_callback, 10)
+            CompressedImage, '/image_raw/compressed', self.recorder_callback, 10)
         self.video_writer = None
 
     def recorder_callback(self, image_msg):
