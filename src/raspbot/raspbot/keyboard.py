@@ -7,6 +7,8 @@ import time
 import math
 import getch
 
+MOTOR_POWER = 35
+
 class KeyboardPublisher(Node):
     def __init__(self):
         super().__init__('keyboard_publisher')
@@ -20,16 +22,16 @@ class KeyboardPublisher(Node):
         match key:
             case 'w':   # forward
                 print("You pressed w!")
-                data = [25, 25]
+                data = [MOTOR_POWER, MOTOR_POWER]
             case 'a':   # left
                 print("You pressed a!")
-                data = [-25, 25]
+                data = [-MOTOR_POWER, MOTOR_POWER]
             case 's':   # back
                 print("You pressed s!")
-                data = [-25, -25]
+                data = [-MOTOR_POWER, -MOTOR_POWER]
             case 'd':   # right
                 print("You pressed d!")
-                data = [25, -25]
+                data = [MOTOR_POWER, -MOTOR_POWER]
             case _:     # default
                 print("You pressed something else!")
                 data = [0, 0]
