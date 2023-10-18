@@ -86,12 +86,12 @@ class ImuPublisher(Node):
         self.hist = []
         self.hist_file_name = f"{time.strftime('%d%m%Y-%H:%M:%S.csv', time.localtime())}"
         hist_file = open(self.hist_file_name, 'w')
-        hist_file.write("epoch_time, xpos, ypos")
+        hist_file.write("epoch_time, xpos, ypos\n")
         hist_file.close()
         # self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
         self.imu_subscription = self.create_subscription(Int32MultiArray, '/imu_control', self.motor_callback, 10)
         timer_period = 0.1 # seconds between scans
-        self.last_time = time.time_ns()
+        self.last_time = time.time()
         self.timer = self.create_timer(timer_period, self.publish_pose)
         self.position_publisher = self.create_publisher(PoseStamped, 'position', 10)
         self.seq = 1
@@ -110,7 +110,7 @@ class ImuPublisher(Node):
             velocity = np.float(0.0052 * msg.data[0])
             print(f"velocity: {velocity}")
             x_d = velocity * sin(self.heading) * delta_time
-            y_d = velocity * cos(self.heading) *  delta_time
+            y_d = velocity * cos(self.heading) * delta_time
             print(f"x_d: {x_d}")
             print(f"y_d: {y_d}")
             self.x += x_d
