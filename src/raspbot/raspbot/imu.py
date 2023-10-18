@@ -24,9 +24,6 @@ import os
 # lPower    | rPower    | Angular v rad/s
 # -100      | 100       | 0.785398
 
-
-
-
 def calculate_imu_hist(motor_hist):
     pos_hist = [(float(0), float(0))] # meters (xPos: float, yPos: float)
     heading_hist = [0] #rads
@@ -87,7 +84,7 @@ class ImuPublisher(Node):
         self.y = 0
         self.heading = 0
         self.hist = []
-        self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
+        # self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
         self.imu_subscription = self.create_subscription(Int32MultiArray, '/imu_control', self.motor_callback, 10)
         timer_period = 0.1 # seconds between scans
         self.last_time = time.time()
@@ -120,6 +117,8 @@ class ImuPublisher(Node):
             delta = angular_velocity * delta_time
             print(delta)
             self.heading += delta
+        hist_file = open('positionHist.txt', 'w')
+        hist_file.write(str(f"{self.x}, {self.y}"))
 
         self.last_time = current_time
 
