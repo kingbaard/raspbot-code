@@ -69,7 +69,6 @@ class Car:
         data = [servo_id, angle]
         self.__write_array(register, data)
 
-
 class MinimalSubscriber(Node):
   def __init__(self):
     super().__init__('motors')
@@ -78,15 +77,19 @@ class MinimalSubscriber(Node):
     self.servo_subscription = self.create_subscription(Int32MultiArray, '/servo_control', self.servo_callback, 10)
     # self.keyboard_subscription = self.create_subscription(Int32MultiArray, '/keyboard_control', self.keyboard_callback, 10)
     self.drive_square_subscription = self.create_subscription(Bool, '/drive_square_control', self.drive_square_callback, 10)
+    timer_period = 0.5 # seconds between publish
     self.motor_publisher = self.create_publisher(Int32MultiArray, 'imu_control', 10)
+    self.current_control = [0, 0]
+    self.timer = self.create_timer(timer_period, self.publish_control)
     self.servo1_angle = -1
     self.servo2_angle = -1
   
   def motor_callback(self, msg):
+    self.current_control = [msg.data[0], msg.data[1]]
+
     motor_msg = Int32MultiArray()
     motor_msg.data = [msg.data[0], msg.data[1]]
     print(msg.data)
-    self.motor_publisher.publish(motor_msg)
     self.car.control_car(msg.data[0], msg.data[1])
   
   def servo_callback(self, msg):
@@ -99,6 +102,12 @@ class MinimalSubscriber(Node):
 
   def keyboard_callback(self, msg):
      self.car.control_car(msg.data[0], msg.data[1])
+
+  def publish_control(self):
+    motor_msg = Int32MultiArray()
+    motor_msg.data = self.current_control
+    print(self.current_control)
+    self.motor_publisher.publish(motor_msg)
 
   def drive_square_callback(self, msg):
     motor_msg = Int32MultiArray()
