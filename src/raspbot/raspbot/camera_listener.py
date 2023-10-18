@@ -34,7 +34,7 @@ class CameraListener(Node):
             self.video_writer.write(cv_image)
             print("vw.write called")
             self.frame_count += 1
-            if self.frame_count == 1000:
+            if self.frame_count == 2000:
                 print("writing to file..")
                 self.frame_count = 0
                 self.video_writer.release()
@@ -54,7 +54,7 @@ class CameraListener(Node):
             # video_filename = str(time.time()) + video_format
             video_filename = f"gaming{self.video_count}." + video_format
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-            fps = 15  # Frames per second
+            fps = 20  # Frames per second
 
             # Save Video
             self.video_writer = cv2.VideoWriter(
