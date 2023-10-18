@@ -98,10 +98,10 @@ class ImuPublisher(Node):
 
     def motor_callback(self, msg):
         # print("top of motor_callback")
-        current_time = time.time_ns()
+        current_time = time.time()
         if self.last_time:
             delta_time = current_time - self.last_time
-            print(f"delta_time: {delta_time} ns")
+            print(f"delta_time: {delta_time} seconds")
 
         #Find distance traveled if not turning
         print (msg.data)
@@ -109,8 +109,8 @@ class ImuPublisher(Node):
             print("detected linear movement")
             velocity = np.float(0.0052 * msg.data[0])
             print(f"velocity: {velocity}")
-            x_d = velocity * sin(self.heading) * math.floor(delta_time / 1000000000)
-            y_d = velocity * -cos(self.heading) *  math.floor(delta_time / 1000000000)
+            x_d = velocity * sin(self.heading) * delta_time
+            y_d = velocity * -cos(self.heading) *  delta_time
             print(f"x_d: {x_d}")
             print(f"y_d: {y_d}")
             self.x += x_d
@@ -123,7 +123,7 @@ class ImuPublisher(Node):
                 angular_velocity = -0.785398
             elif msg.data[0] > 0:
                 angular_velocity = 0.785398
-            delta = angular_velocity * math.floor(delta_time / 1000000000)
+            delta = angular_velocity * delta_time
             print(f"angular delta: {delta}")
             # print(delta)
             self.heading += delta
