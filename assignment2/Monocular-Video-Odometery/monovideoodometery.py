@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import os
 
+# Scale of the fake pose change
 CHANGE = 2
 
 class MonoVideoOdometery(object):
@@ -122,13 +123,6 @@ class MonoVideoOdometery(object):
         #         self.R = R.dot(self.R)
 
         E, _ = cv2.findEssentialMat(self.good_new, self.good_old, self.focal, self.pp, cv2.RANSAC, 0.999, 1.0, None)
-        print(f'self.good_new: {self.good_new}')
-        print(f'self.good_old: {self.good_old}')
-        print(f'self.focal: {self.focal}')
-        print(f'self.pp: {self.pp}')
-        print(f'THIS IS E: {E}')
-        E = E[:3]
-        print(f'THIS IS NEW E: {E}')
         _, R, t, _ = cv2.recoverPose(E, self.good_old, self.good_new, focal=self.focal, pp=self.pp, mask=None)
         # If the frame is one of first two, we need to initalize
         # our t and R vectors so behavior is different
@@ -180,6 +174,8 @@ class MonoVideoOdometery(object):
         # x = float(pose[3])
         # y = float(pose[7])
         # z = float(pose[11])
+
+        # Fake the pose instead
         x_prev = self.x
         y_prev = self.y
         z_prev = self.z

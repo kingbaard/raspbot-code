@@ -1,3 +1,10 @@
+# Running Assignment 2 Odometry Code
+Create image sequence from video by running `python ./create_image_sequence.py ./inputs/videos/your_video_name.mp4 ./inputs/images/your_video_name/`
+Run video odometry on the image sequence by running `python ./test.py ./inputs/images/your_video_name/ ./inputs/poses/pose_0.txt`
+
+
+
+
 # Monocular Video Odometry Using OpenCV
 This is an Python OpenCV based implementation of visual odometery. 
 
