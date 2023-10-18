@@ -108,8 +108,8 @@ class ImuPublisher(Node):
         if msg.data[0] == msg.data[1]:
             print("detected linear movement")
             velocity = 0.0052 * msg.data[0] - 0.1
-            x_d = velocity * sin(self.heading) * (delta_time * 1000000000)
-            y_d = velocity * cos(self.heading) *  (delta_time * 1000000000)
+            x_d = velocity * sin(self.heading) * math.floor(delta_time / 1000000000)
+            y_d = velocity * cos(self.heading) *  math.floor(delta_time / 1000000000)
 
             self.x += x_d
             self.y += y_d
@@ -121,7 +121,7 @@ class ImuPublisher(Node):
                 angular_velocity = -0.785398
             elif msg.data[0] > 0:
                 angular_velocity = 0.785398
-            delta = angular_velocity * (delta_time * 1000000000)
+            delta = angular_velocity * math.floor(delta_time / 1000000000)
             # print(delta)
             self.heading += delta
         
