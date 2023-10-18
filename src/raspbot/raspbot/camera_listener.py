@@ -18,7 +18,7 @@ class CameraListener(Node):
         self.image_subscription = self.create_subscription(
             CompressedImage, '/image_raw/compressed', self.recorder_callback, 10)
         self.video_writer = None
-        self.image_array: np.array =  np.array()
+        # self.image_array: np.array =  np.array()
 
     def recorder_callback(self, image_msg):
         try:
@@ -29,8 +29,8 @@ class CameraListener(Node):
             if self.video_writer == None:
                 self.init_video_writer(cv_image)
                 print("video_writer inited")
-            if not self.image_array:
-                pass
+            # if not self.image_array:
+            #     pass
             self.video_writer.write(cv_image)
             print("vw.write called")
             self.frame_count += 1
