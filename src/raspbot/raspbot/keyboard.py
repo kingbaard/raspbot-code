@@ -7,7 +7,7 @@ import time
 import math
 import getch
 
-MOTOR_POWER = 40
+MOTOR_POWER = 50
 
 
 class KeyboardPublisher(Node):
@@ -26,13 +26,13 @@ class KeyboardPublisher(Node):
                 data = [MOTOR_POWER, MOTOR_POWER]
             case 'a':   # left
                 print("You pressed a!")
-                data = [-MOTOR_POWER - 5, MOTOR_POWER]
+                data = [-MOTOR_POWER, MOTOR_POWER]
             case 's':   # back
                 print("You pressed s!")
                 data = [-MOTOR_POWER, -MOTOR_POWER]
             case 'd':   # right
                 print("You pressed d!")
-                data = [MOTOR_POWER, -MOTOR_POWER - 5]
+                data = [MOTOR_POWER, -MOTOR_POWER]
             case _:     # default
                 print("You pressed something else!")
                 data = [0, 0]
