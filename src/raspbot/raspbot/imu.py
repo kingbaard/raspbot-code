@@ -84,6 +84,9 @@ class ImuPublisher(Node):
         self.y = 0
         self.heading = 0
         self.hist = []
+        self.hist_file = open(f"{time.now.strftime('%d%m%Y-%H:%M:%S.csv')}")
+        self.hist_file.write("epoch_time, xpos, ypos")
+        self.hist_file.close()
         # self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
         self.imu_subscription = self.create_subscription(Int32MultiArray, '/imu_control', self.motor_callback, 10)
         timer_period = 0.1 # seconds between scans
@@ -118,9 +121,9 @@ class ImuPublisher(Node):
             print(delta)
             self.heading += delta
         
-        hist_file = open('positionHist.txt', 'a+')
-        hist_file.write(str(f"{self.x}, {self.y}"))
-        hist_file.close()
+        self.hist_file.open()
+        self.hist_file.write(str(f"{time.time_ns()},{self.x}, {self.y}\n"))
+        self.hist_file.close()
 
         self.last_time = current_time
 
