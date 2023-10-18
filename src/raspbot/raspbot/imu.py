@@ -123,8 +123,8 @@ class ImuPublisher(Node):
             self.heading += delta
         
         hist_file = open(self.hist_file_name, 'a+')
-        self.hist_file.write(str(f"{time.time_ns()},{self.x}, {self.y}\n"))
-        self.hist_file.close()
+        hist_file.write(str(f"{time.time_ns()},{self.x}, {self.y}\n"))
+        hist_file.close()
 
         self.last_time = current_time
 
