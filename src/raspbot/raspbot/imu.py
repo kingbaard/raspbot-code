@@ -117,8 +117,10 @@ class ImuPublisher(Node):
             delta = angular_velocity * delta_time
             print(delta)
             self.heading += delta
+        
         hist_file = open('positionHist.txt', 'w')
         hist_file.write(str(f"{self.x}, {self.y}"))
+        hist_file.close()
 
         self.last_time = current_time
 
