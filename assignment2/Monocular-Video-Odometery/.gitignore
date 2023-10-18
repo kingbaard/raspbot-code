@@ -1,4 +1,5 @@
 __pycache__/
-inputs/videos/**
-inputs/images/**
+inputs/videos/*
+inputs/images/*
 !Around_the_room_small.mp4
+!Around_the_room_small/
