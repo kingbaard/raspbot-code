@@ -118,7 +118,7 @@ class ImuPublisher(Node):
             print(delta)
             self.heading += delta
         
-        hist_file = open('positionHist.txt', 'w')
+        hist_file = open('positionHist.txt', 'a+')
         hist_file.write(str(f"{self.x}, {self.y}"))
         hist_file.close()
 
