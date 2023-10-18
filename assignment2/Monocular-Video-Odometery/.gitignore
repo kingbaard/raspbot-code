@@ -1,0 +1,5 @@
+__pycache__/
+inputs/videos/*
+inputs/images/*
+!VO_video.mp4
+!VO_video/
