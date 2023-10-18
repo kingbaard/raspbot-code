@@ -54,7 +54,7 @@ class CameraListener(Node):
             # video_filename = str(time.time()) + video_format
             video_filename = f"gaming{self.video_count}." + video_format
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-            fps = 60  # Frames per second
+            fps = 15  # Frames per second
 
             # Save Video
             self.video_writer = cv2.VideoWriter(
