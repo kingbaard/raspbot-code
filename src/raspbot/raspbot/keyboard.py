@@ -7,7 +7,7 @@ import time
 import math
 import getch
 
-MOTOR_POWER = 35
+MOTOR_POWER = 40
 
 class KeyboardPublisher(Node):
     def __init__(self):
