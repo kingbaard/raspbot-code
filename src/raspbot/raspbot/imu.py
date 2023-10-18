@@ -115,6 +115,7 @@ class ImuPublisher(Node):
             print(f"y_d: {y_d}")
             self.x += x_d
             self.y += y_d
+            print(f"current coords: ({self.x}, {self.y})")
         else:
             print("detected angular movement")
         #Find change in heading if turning
@@ -125,9 +126,9 @@ class ImuPublisher(Node):
                 angular_velocity = 0.785398
             delta = angular_velocity * delta_time
             print(f"angular delta: {delta}")
-            print(f"heading: {self.heading}")
             # print(delta)
             self.heading += delta
+            print(f"heading: {self.heading}")
         
         hist_file = open(self.hist_file_name, 'a+')
         hist_file.write(str(f"{time.time_ns()},{self.x}, {self.y}\n"))
