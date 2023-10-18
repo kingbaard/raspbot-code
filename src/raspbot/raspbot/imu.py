@@ -89,17 +89,22 @@ class ImuPublisher(Node):
         hist_file.write("epoch_time, xpos, ypos\n0, 0.0, 0.0")
         hist_file.close()
         # self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
+        
         self.imu_subscription = self.create_subscription(Int32MultiArray, '/imu_control', self.motor_callback, 10)
         timer_period = 0.1 # seconds between scans
         self.last_time = time.time()
+        self.last_msg = None
         self.timer = self.create_timer(timer_period, self.publish_pose)
         self.position_publisher = self.create_publisher(PoseStamped, 'position', 10)
-        
+
         self.seq = 1
 
     def motor_callback(self, msg):
         # print("top of motor_callback")
         current_time = time.time()
+        if not self.last_msg:
+            self.last_msg = msg
+            return None
         if self.last_time:
             delta_time = current_time - self.last_time
             print(f"delta_time: {delta_time} seconds")
@@ -132,9 +137,10 @@ class ImuPublisher(Node):
             print(f"heading: {self.heading}")
         
         hist_file = open(self.hist_file_name, 'a+')
-        hist_file.write(str(f"{time.time_ns()},{self.x}, {self.y}\n"))
+        hist_file.write(str(f"{time.time()},{self.x}, {self.y}\n"))
         hist_file.close()
 
+        self.last_msg = msg
         self.last_time = current_time
 
         # For post viz
