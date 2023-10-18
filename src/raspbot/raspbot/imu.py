@@ -86,7 +86,7 @@ class ImuPublisher(Node):
         self.hist = []
         self.hist_file_name = f"{time.strftime('%d%m%Y-%H:%M:%S.csv', time.localtime())}"
         hist_file = open(self.hist_file_name, 'w')
-        hist_file.write("epoch_time, xpos, ypos\n0, 0.0, 0.0")
+        hist_file.write("epoch_time, xpos, ypos, heading\n0, 0.0, 0.0, 0.0")
         hist_file.close()
         # self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
         
@@ -137,7 +137,7 @@ class ImuPublisher(Node):
             print(f"heading: {self.heading}")
         
         hist_file = open(self.hist_file_name, 'a+')
-        hist_file.write(str(f"{time.time()},{self.x}, {self.y}\n"))
+        hist_file.write(str(f"{time.time()},{self.x}, {self.y}, {self.heading}\n"))
         hist_file.close()
 
         self.last_msg = msg
