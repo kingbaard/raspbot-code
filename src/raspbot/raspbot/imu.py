@@ -4,7 +4,7 @@ from rclpy.lifecycle import TransitionCallbackReturn
 
 from std_msgs.msg import Int32MultiArray, Bool
 from geometry_msgs.msg import PoseStamped
-
+import numpy as np
 from numpy import sin, cos
 import matplotlib.pyplot as plt
 import smbus
@@ -80,8 +80,8 @@ def save_pos_plot(pos_hist):
 class ImuPublisher(Node):
     def __init__(self):
         super().__init__('imu')
-        self.x = 0
-        self.y = 0
+        self.x : np.float32 = 0
+        self.y : np.float32 = 0
         self.heading = 0
         self.hist = []
         self.hist_file_name = f"{time.strftime('%d%m%Y-%H:%M:%S.csv', time.localtime())}"
@@ -107,8 +107,8 @@ class ImuPublisher(Node):
         print (msg.data)
         if msg.data[0] == msg.data[1]:
             print("detected linear movement")
-            velocity = 0.0052 * msg.data[0] - 0.1
-            print("velocity: {velocity}")
+            velocity = np.float(0.0052 * msg.data[0] - 0.1)
+            print(f"velocity: {velocity}")
             x_d = velocity * sin(self.heading) * math.floor(delta_time / 1000000000)
             y_d = velocity * cos(self.heading) *  math.floor(delta_time / 1000000000)
             print(f"x_d: {x_d}")
