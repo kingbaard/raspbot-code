@@ -14,6 +14,7 @@ class CameraListener(Node):
     def __init__(self):
         super().__init__('camera_listener')
         self.frame_count = 0
+        self.video_count = 0
         self.image_subscription = self.create_subscription(
             CompressedImage, '/image_raw/compressed', self.recorder_callback, 10)
         self.video_writer = None
@@ -38,7 +39,7 @@ class CameraListener(Node):
                 self.frame_count = 0
                 self.video_writer.release()
                 self.video_writer = None
-                input('Stop!')
+                self.video_count += 1
 
         except Exception as e:
             print('Error processing image: %s' % str(e))
@@ -51,9 +52,9 @@ class CameraListener(Node):
             height, width, _ = image.shape
             video_format = 'mp4'  # or any other video format supported by OpenCV
             # video_filename = str(time.time()) + video_format
-            video_filename = "gaming." + video_format
+            video_filename = f"gaming{self.video_count}." + video_format
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-            fps = 15  # Frames per second
+            fps = 60  # Frames per second
 
             # Save Video
             self.video_writer = cv2.VideoWriter(
