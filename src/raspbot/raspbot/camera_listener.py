@@ -7,6 +7,7 @@ import cv2
 import numpy as np
 import os
 import time
+import pickle
 
 
 class CameraListener(Node):
@@ -16,6 +17,7 @@ class CameraListener(Node):
         self.image_subscription = self.create_subscription(
             CompressedImage, '/image_raw/compressed', self.recorder_callback, 10)
         self.video_writer = None
+        self.image_array: np.array =  np.array()
 
     def recorder_callback(self, image_msg):
         try:
@@ -26,6 +28,8 @@ class CameraListener(Node):
             if self.video_writer == None:
                 self.init_video_writer(cv_image)
                 print("video_writer inited")
+            if not self.image_array:
+                pass
             self.video_writer.write(cv_image)
             print("vw.write called")
             self.frame_count += 1
@@ -39,6 +43,9 @@ class CameraListener(Node):
         except Exception as e:
             print('Error processing image: %s' % str(e))
 
+    def save_np_array(self, array):
+        pass 
+
     def init_video_writer(self, image):
         try:
             height, width, _ = image.shape
@@ -46,12 +53,13 @@ class CameraListener(Node):
             # video_filename = str(time.time()) + video_format
             video_filename = "gaming." + video_format
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-            fps = 30  # Frames per second
+            fps = 15  # Frames per second
+
+            # Save Video
             self.video_writer = cv2.VideoWriter(
                 video_filename, fourcc, fps, (width, height))
             if not self.video_writer.isOpened():
                 self.video_writer.open()
-            print(type(self.video_writer))
             time.sleep(3)
         except Exception as e:
             print('Error initializing video writer: %s' % str(e))
@@ -63,7 +71,6 @@ class CameraListener(Node):
 
 
 def main(args=None):
-    print(os.getcwd())
     rclpy.init(args=args)
 
     subscriber = CameraListener()
