@@ -110,7 +110,7 @@ class ImuPublisher(Node):
             velocity = np.float(0.0052 * msg.data[0])
             print(f"velocity: {velocity}")
             x_d = velocity * sin(self.heading) * delta_time
-            y_d = velocity * -cos(self.heading) *  delta_time
+            y_d = velocity * cos(self.heading) *  delta_time
             print(f"x_d: {x_d}")
             print(f"y_d: {y_d}")
             self.x += x_d
@@ -125,6 +125,7 @@ class ImuPublisher(Node):
                 angular_velocity = 0.785398
             delta = angular_velocity * delta_time
             print(f"angular delta: {delta}")
+            print(f"heading: {self.heading}")
             # print(delta)
             self.heading += delta
         
