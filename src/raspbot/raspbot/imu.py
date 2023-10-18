@@ -107,10 +107,10 @@ class ImuPublisher(Node):
         print (msg.data)
         if msg.data[0] == msg.data[1]:
             print("detected linear movement")
-            velocity = np.float(0.0052 * msg.data[0] - 0.1)
+            velocity = np.float(0.0052 * msg.data[0])
             print(f"velocity: {velocity}")
             x_d = velocity * sin(self.heading) * math.floor(delta_time / 1000000000)
-            y_d = velocity * cos(self.heading) *  math.floor(delta_time / 1000000000)
+            y_d = velocity * -cos(self.heading) *  math.floor(delta_time / 1000000000)
             print(f"x_d: {x_d}")
             print(f"y_d: {y_d}")
             self.x += x_d
