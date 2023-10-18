@@ -80,9 +80,9 @@ def save_pos_plot(pos_hist):
 class ImuPublisher(Node):
     def __init__(self):
         super().__init__('imu')
-        self.x : np.float32 = 0
-        self.y : np.float32 = 0
-        self.heading = 0
+        self.x : np.float32 = 0.0
+        self.y : np.float32 = 0.0
+        self.heading  : np.float32 = 0.0
         self.hist = []
         self.hist_file_name = f"{time.strftime('%d%m%Y-%H:%M:%S.csv', time.localtime())}"
         hist_file = open(self.hist_file_name, 'w')
