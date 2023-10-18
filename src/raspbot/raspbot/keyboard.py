@@ -20,16 +20,16 @@ class KeyboardPublisher(Node):
         match key:
             case 'w':   # forward
                 print("You pressed w!")
-                data = [50, 50]
+                data = [25, 25]
             case 'a':   # left
                 print("You pressed a!")
-                data = [-50, 50]
+                data = [-25, 25]
             case 's':   # back
                 print("You pressed s!")
-                data = [-50, -50]
+                data = [-25, -25]
             case 'd':   # right
                 print("You pressed d!")
-                data = [50, -50]
+                data = [25, -25]
             case _:     # default
                 print("You pressed something else!")
                 data = [0, 0]
