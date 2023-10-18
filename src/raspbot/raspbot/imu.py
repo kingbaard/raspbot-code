@@ -84,42 +84,45 @@ class ImuPublisher(Node):
         self.y = 0
         self.heading = 0
         self.hist = []
-        self.hist_file_name = f"{time.strftime('%d%m%Y-%H:%M:%S.csv', time.localtime())}.csv"
+        self.hist_file_name = f"{time.strftime('%d%m%Y-%H:%M:%S.csv', time.localtime())}"
         hist_file = open(self.hist_file_name, 'w')
         hist_file.write("epoch_time, xpos, ypos")
         hist_file.close()
         # self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
         self.imu_subscription = self.create_subscription(Int32MultiArray, '/imu_control', self.motor_callback, 10)
         timer_period = 0.1 # seconds between scans
-        self.last_time = time.time()
+        self.last_time = time.time_ns()
         self.timer = self.create_timer(timer_period, self.publish_pose)
         self.position_publisher = self.create_publisher(PoseStamped, 'position', 10)
         self.seq = 1
 
     def motor_callback(self, msg):
-        print("top of motor_callback")
-        current_time = time.time()
+        # print("top of motor_callback")
+        current_time = time.time_ns()
         if self.last_time:
             delta_time = current_time - self.last_time
+            print(f"delta_time: {delta_time} ns")
 
         #Find distance traveled if not turning
         print (msg.data)
         if msg.data[0] == msg.data[1]:
+            print("detected linear movement")
             velocity = 0.0052 * msg.data[0] - 0.1
-            x_d = velocity * sin(self.heading) * delta_time
-            y_d = velocity * cos(self.heading) *  delta_time
+            x_d = velocity * sin(self.heading) * (delta_time * 1000000000)
+            y_d = velocity * cos(self.heading) *  (delta_time * 1000000000)
 
             self.x += x_d
             self.y += y_d
         else:
+            print("detected angular movement")
         #Find change in heading if turning
             angular_velocity = 0
             if msg.data[0] < 0:
                 angular_velocity = -0.785398
             elif msg.data[0] > 0:
                 angular_velocity = 0.785398
-            delta = angular_velocity * delta_time
-            print(delta)
+            delta = angular_velocity * (delta_time * 1000000000)
+            # print(delta)
             self.heading += delta
         
         hist_file = open(self.hist_file_name, 'a+')
