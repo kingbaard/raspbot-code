@@ -127,9 +127,9 @@ class ImuPublisher(Node):
         #Find change in heading if turning
             angular_velocity = 0
             if msg.data[0] < 0:
-                angular_velocity = -0.785398
+                angular_velocity = -0.785398 * 2
             elif msg.data[0] > 0:
-                angular_velocity = 0.785398
+                angular_velocity = 0.785398 * 2
             delta = angular_velocity * delta_time
             print(f"angular delta: {delta}")
             # print(delta)
