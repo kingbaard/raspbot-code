@@ -1,7 +1,9 @@
+from enum import Enum
 import rclpy
 from rclpy.node import Node
 
 from std_msgs.msg import Int32MultiArray, Bool
+from sensor_msgs.msg import Range
 
 import smbus
 import time
@@ -73,16 +75,33 @@ class MinimalSubscriber(Node):
   def __init__(self):
     super().__init__('motors')
     self.car = Car()
-    self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
-    self.servo_subscription = self.create_subscription(Int32MultiArray, '/servo_control', self.servo_callback, 10)
-    # self.keyboard_subscription = self.create_subscription(Int32MultiArray, '/keyboard_control', self.keyboard_callback, 10)
-    self.drive_square_subscription = self.create_subscription(Bool, '/drive_square_control', self.drive_square_callback, 10)
+
+    # Subscriptions
+    # self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
+    # self.servo_subscription = self.create_subscription(Int32MultiArray, '/servo_control', self.servo_callback, 10)
+    # self.drive_square_subscription = self.create_subscription(Bool, '/drive_square_control', self.drive_square_callback, 10)
+    self.keyboard_subscription = self.create_subscription(Int32MultiArray, '/keyboard_control', self.keyboard_callback, 10)
+    self.warehouse_subscription = self.create_subscription(Bool, '/warehouse_control', self.warehouse_callback, 10)
+    self.april_tag_subscription = self.create_subscription(Int32MultiArray, '/april_tag_control', self.april_tag_callback, 10)
+    self.sonar_subscription = self.create_subscription(Range, '/sonar_control', self.sonar_callback, 10)
+
+    # IMU Publisher
     timer_period = 0.5 # seconds between publish
     self.motor_publisher = self.create_publisher(Int32MultiArray, 'imu_control', 10)
     self.current_control = [0, 0]
     self.timer = self.create_timer(timer_period, self.publish_control)
+
+    # Initial values
     self.servo1_angle = -1
     self.servo2_angle = -1
+    self.e_stop = False
+    self.state = States.SEARCH
+    self.sonar_distance = None
+    self.completed = []
+    self.target_acquired = False
+    self.package_received = False
+    self.goal_found = False
+    self.package_delivered = False
   
   def motor_callback(self, msg):
     self.current_control = [msg.data[0], msg.data[1]]
@@ -101,7 +120,13 @@ class MinimalSubscriber(Node):
       self.servo2_angle = msg.data[1]
 
   def keyboard_callback(self, msg):
-     self.car.control_car(msg.data[0], msg.data[1])
+    self.car.control_car(msg.data[0], msg.data[1])
+    if msg.data[0] == 0 and msg.data[1] == 0:
+      # Toggle E-stop and reset
+      print("E-STOP")
+      self.e_stop = not self.e_stop
+      self.state = States.RESET
+      self.completed = []
 
   def publish_control(self):
     motor_msg = Int32MultiArray()
@@ -111,7 +136,7 @@ class MinimalSubscriber(Node):
 
   def drive_square_callback(self, msg):
     motor_msg = Int32MultiArray()
-    if (msg.data):
+    if msg.data:
       for _ in range(4):
         # Drive forward
         motor_msg.data = [50, 50]
@@ -128,6 +153,76 @@ class MinimalSubscriber(Node):
     motor_msg.data = [0, 0]
     self.motor_publisher.publish(motor_msg)
     self.car.control_car(0,0)
+  
+  def warehouse_control(self, msg):
+    if msg.data and not self.e_stop:
+      match (self.state):
+        case States.SEARCH:
+          print("State: SEARCH")
+          if self.target_acquired:
+            self.car.control_car(0, 0)
+            self.state = States.ACQUIRE
+          else:
+            self.car.control_car(-100, 50)
+
+        case States.ACQUIRE:
+          print("State: ACQUIRE")
+          if self.sonar_distance < .2: 
+            # self.package_received = True
+            self.car.control_car(0, 0)
+            self.state = States.FIND_GOAL
+          else:
+            self.car.control_car(100, 100)
+
+        case States.FIND_GOAL:
+          print("State: FIND_GOAL")
+          if self.goal_found:
+            self.car.control_car(0, 0)
+            self.state = States.DELIVER
+          else:
+            self.car.control_car(-100, 50) 
+
+        case States.DELIVER:
+          print("State: DELIVER")
+          if self.package_delivered:
+            self.car.control_car(0, 0)
+            # Add delivered box to completed boxes?
+            # self.completed.append()
+            self.state = States.RESET
+          else:
+            self.car.control_car(100, 100)
+
+        case States.RESET:
+          print("State: RESET")
+          if self.sonar_distance >= 5:
+            self.state = States.SEARCH
+            self.target_acquired = False
+            # self.package_received = False
+            self.goal_found = False
+            self.package_delivered = False
+          else:
+            self.car.control_car(-100, -100)
+
+        case _:
+          print("ERROR")
+          self.car.control_car(0, 0)
+    else:
+      self.car.control_car(0, 0)
+
+  def april_tag_control(self, msg):
+    # Recognize april tag, check if already completed
+    self.target_acquired = msg.data[0]
+    self.goal_found = msg.data[1]
+  
+  def sonar_control(self, msg):
+    self.sonar_distance = msg.range
+
+class States(Enum):
+  SEARCH = 0
+  ACQUIRE = 1
+  FIND_GOAL = 2
+  DELIVER = 3
+  RESET = 4
 
 def main(args=None):
   rclpy.init(args=args)
