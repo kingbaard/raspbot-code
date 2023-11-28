@@ -25,11 +25,6 @@ docker run -it --rm --privileged -v ${PWD}/ros2_nodes:/root/ros2_ws/src humble
 ## To run our code
 
 - cd into ```~/raspbot-code/```
-- Build docker container
-  - Run ```docker build .```
-- Run docker container
-  - ```docker run -it --rm --privileged -v ${PWD}/ros2_nodes:/root/ros2_ws/src <docker container id>```
-- cd into ```/root/ros2_ws```
 - Run: ```colcon build --symlink-install```
 - Run: ```source src/source.sh```
 - Run motors first. It must be running for any of the following to run.
