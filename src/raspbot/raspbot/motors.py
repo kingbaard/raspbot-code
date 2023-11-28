@@ -17,7 +17,7 @@ import math
 # 200   | .765
 # 1     | .0042 ish?
 
-MOTOR_POWER = 100
+MOTOR_POWER = 75
 
 class Car:
     def __init__(self):
@@ -190,7 +190,7 @@ class MinimalSubscriber(Node):
 
         case States.ACQUIRE:
           print("State: ACQUIRE")
-          if self.sonar_distance < .05: 
+          if self.sonar_distance < .06: 
             # self.package_received = True
             self.car.control_car(0, 0)
             self.state = States.FIND_GOAL
@@ -217,7 +217,7 @@ class MinimalSubscriber(Node):
 
         case States.RESET:
           print("State: RESET")
-          if self.sonar_distance >= 5:
+          if self.sonar_distance >= 1 or self.sonar_distance == -1:
             self.state = States.SEARCH
             self.target_acquired = False
             # self.package_received = False
