@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import String
+from std_msgs.msg import Char
 import smbus
 import time
 import math
@@ -10,17 +10,17 @@ import getch
 class KeyboardPublisher(Node):
     def __init__(self):
         super().__init__('keyboard_publisher')
-        self.publisher = self.create_publisher(String, 'keyboard_control', 10)
+        self.publisher = self.create_publisher(Char, 'keyboard_control', 10)
         timer_period = 0.1 # seconds between scans
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
     def get_data(self):
         key = getch.getch()
         key = key.lower()
-        return key
+        return int(key)
 
     def timer_callback(self):
-        msg = String()
+        msg = Char()
         msg.data = self.get_data()
         self.publisher.publish(msg)
 

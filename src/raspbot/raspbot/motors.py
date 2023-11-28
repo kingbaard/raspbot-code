@@ -2,7 +2,7 @@ from enum import Enum
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import String, Bool
+from std_msgs.msg import Char, Bool
 from sensor_msgs.msg import Range
 from tf2_msgs.msg import TFMessage
 
@@ -83,7 +83,7 @@ class MinimalSubscriber(Node):
     # self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
     # self.servo_subscription = self.create_subscription(Int32MultiArray, '/servo_control', self.servo_callback, 10)
     # self.drive_square_subscription = self.create_subscription(Bool, '/drive_square_control', self.drive_square_callback, 10)
-    self.keyboard_subscription = self.create_subscription(String, '/keyboard_control', self.keyboard_callback, 10)
+    self.keyboard_subscription = self.create_subscription(Char, '/keyboard_control', self.keyboard_callback, 10)
     self.warehouse_subscription = self.create_subscription(Bool, '/warehouse_control', self.warehouse_callback, 10)
     self.april_tag_subscription = self.create_subscription(TFMessage, '/tf', self.april_tag_callback, 10)
     self.sonar_subscription = self.create_subscription(Range, '/sonar', self.sonar_callback, 10)
@@ -125,23 +125,23 @@ class MinimalSubscriber(Node):
   def keyboard_callback(self, msg):
     print(f"You pressed '{msg.data}'")
     match msg.data:
-      case 'w':   # forward
+      case int('w'):   # forward
           self.car.control_car(MOTOR_POWER, MOTOR_POWER)
-      case 'a':   # left
+      case int('a'):   # left
           self.car.control_car(-MOTOR_POWER, MOTOR_POWER)
-      case 's':   # back
+      case int('s'):   # back
           self.car.control_car(-MOTOR_POWER, -MOTOR_POWER)
-      case 'd':   # right
+      case int('d'):   # right
           self.car.control_car(MOTOR_POWER, -MOTOR_POWER)
-      case '0':   # State 0
+      case int('0'):   # State 0
           self.state = States.SEARCH
-      case '1':   # State 1
+      case int('1'):   # State 1
           self.state = States.ACQUIRE
-      case '2':   # State 2
+      case int('2'):   # State 2
           self.state = States.FIND_GOAL
-      case '3':   # State 3
+      case int('3'):   # State 3
           self.state = States.DELIVER
-      case '4':   # State 4
+      case int('4'):   # State 4
           self.state = States.RESET
       case _:   # Toggle E-stop and reset (default)
           self.car.control_car(0, 0)
