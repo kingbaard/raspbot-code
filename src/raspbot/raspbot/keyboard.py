@@ -17,6 +17,7 @@ class KeyboardPublisher(Node):
     def get_data(self):
         key = getch.getch()
         key = key.lower()
+        print(ord(key))
         return ord(key)
 
     def timer_callback(self):
