@@ -2,7 +2,7 @@ from enum import Enum
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import Int32MultiArray, Bool
+from std_msgs.msg import Char, Bool
 from sensor_msgs.msg import Range
 from tf2_msgs.msg import TFMessage
 
@@ -17,7 +17,7 @@ import math
 # 200   | .765
 # 1     | .0042 ish?
 
-MOTOR_POWER = 55
+MOTOR_POWER = 100
 
 class Car:
     def __init__(self):
@@ -83,7 +83,7 @@ class MinimalSubscriber(Node):
     # self.motor_subscription = self.create_subscription(Int32MultiArray, '/motor_control', self.motor_callback, 10)
     # self.servo_subscription = self.create_subscription(Int32MultiArray, '/servo_control', self.servo_callback, 10)
     # self.drive_square_subscription = self.create_subscription(Bool, '/drive_square_control', self.drive_square_callback, 10)
-    self.keyboard_subscription = self.create_subscription(Int32MultiArray, '/keyboard_control', self.keyboard_callback, 10)
+    self.keyboard_subscription = self.create_subscription(Char, '/keyboard_control', self.keyboard_callback, 10)
     self.warehouse_subscription = self.create_subscription(Bool, '/warehouse_control', self.warehouse_callback, 10)
     self.april_tag_subscription = self.create_subscription(TFMessage, '/tf', self.april_tag_callback, 10)
     self.sonar_subscription = self.create_subscription(Range, '/sonar', self.sonar_callback, 10)
@@ -123,8 +123,8 @@ class MinimalSubscriber(Node):
   #     self.servo2_angle = msg.data[1]
 
   def keyboard_callback(self, msg):
-    print(f"You pressed '{msg.data[0]}'")
-    match msg.data[0]:
+    print(f"You pressed '{msg.data}'")
+    match msg.data:
       case 'w':   # forward
           self.car.control_car(MOTOR_POWER, MOTOR_POWER)
       case 'a':   # left
@@ -185,7 +185,7 @@ class MinimalSubscriber(Node):
             self.car.control_car(0, 0)
             self.state = States.ACQUIRE
           else:
-            self.car.control_car(-100, 50)
+            self.car.control_car(-MOTOR_POWER, MOTOR_POWER)
 
         case States.ACQUIRE:
           print("State: ACQUIRE")
@@ -194,7 +194,7 @@ class MinimalSubscriber(Node):
             self.car.control_car(0, 0)
             self.state = States.FIND_GOAL
           else:
-            self.car.control_car(100, 100)
+            self.car.control_car(MOTOR_POWER, MOTOR_POWER)
 
         case States.FIND_GOAL:
           print("State: FIND_GOAL")
@@ -202,7 +202,7 @@ class MinimalSubscriber(Node):
             self.car.control_car(0, 0)
             self.state = States.DELIVER
           else:
-            self.car.control_car(-100, 50) 
+            self.car.control_car(-MOTOR_POWER, MOTOR_POWER) 
 
         case States.DELIVER:
           print("State: DELIVER")
@@ -212,7 +212,7 @@ class MinimalSubscriber(Node):
             # self.completed.append()
             self.state = States.RESET
           else:
-            self.car.control_car(100, 100)
+            self.car.control_car(MOTOR_POWER, MOTOR_POWER)
 
         case States.RESET:
           print("State: RESET")
@@ -223,7 +223,7 @@ class MinimalSubscriber(Node):
             self.goal_found = False
             self.package_delivered = False
           else:
-            self.car.control_car(-100, -100)
+            self.car.control_car(-MOTOR_POWER, -MOTOR_POWER)
 
         case _:
           print("ERROR")
