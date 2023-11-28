@@ -123,6 +123,7 @@ class MinimalSubscriber(Node):
   #     self.servo2_angle = msg.data[1]
 
   def keyboard_callback(self, msg):
+    print("HELLO WORLD")
     print(f"You pressed '{chr(msg.data)}'")
     match chr(msg.data):
       case 'w':   # forward
