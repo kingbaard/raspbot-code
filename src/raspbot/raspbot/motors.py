@@ -4,6 +4,7 @@ from rclpy.node import Node
 
 from std_msgs.msg import Int32MultiArray, Bool
 from sensor_msgs.msg import Range
+from tf2_msgs.msg import TFMessage
 
 import smbus
 import time
@@ -15,6 +16,8 @@ import math
 # 100   | .42
 # 200   | .765
 # 1     | .0042 ish?
+
+MOTOR_POWER = 55
 
 class Car:
     def __init__(self):
@@ -82,18 +85,18 @@ class MinimalSubscriber(Node):
     # self.drive_square_subscription = self.create_subscription(Bool, '/drive_square_control', self.drive_square_callback, 10)
     self.keyboard_subscription = self.create_subscription(Int32MultiArray, '/keyboard_control', self.keyboard_callback, 10)
     self.warehouse_subscription = self.create_subscription(Bool, '/warehouse_control', self.warehouse_callback, 10)
-    self.april_tag_subscription = self.create_subscription(Int32MultiArray, '/april_tag_control', self.april_tag_callback, 10)
-    self.sonar_subscription = self.create_subscription(Range, '/sonar_control', self.sonar_callback, 10)
+    self.april_tag_subscription = self.create_subscription(TFMessage, '/tf', self.april_tag_callback, 10)
+    self.sonar_subscription = self.create_subscription(Range, '/sonar', self.sonar_callback, 10)
 
     # IMU Publisher
-    timer_period = 0.5 # seconds between publish
-    self.motor_publisher = self.create_publisher(Int32MultiArray, 'imu_control', 10)
-    self.current_control = [0, 0]
-    self.timer = self.create_timer(timer_period, self.publish_control)
+    # timer_period = 0.5 # seconds between publish
+    # self.motor_publisher = self.create_publisher(Int32MultiArray, 'imu_control', 10)
+    # self.current_control = [0, 0]
+    # self.timer = self.create_timer(timer_period, self.publish_control)
 
     # Initial values
-    self.servo1_angle = -1
-    self.servo2_angle = -1
+    # self.servo1_angle = -1
+    # self.servo2_angle = -1
     self.e_stop = False
     self.state = States.SEARCH
     self.sonar_distance = None
@@ -103,56 +106,75 @@ class MinimalSubscriber(Node):
     self.goal_found = False
     self.package_delivered = False
   
-  def motor_callback(self, msg):
-    self.current_control = [msg.data[0], msg.data[1]]
+  # def motor_callback(self, msg):
+  #   self.current_control = [msg.data[0], msg.data[1]]
 
-    motor_msg = Int32MultiArray()
-    motor_msg.data = [msg.data[0], msg.data[1]]
-    print(msg.data)
-    self.car.control_car(msg.data[0], msg.data[1])
+  #   motor_msg = Int32MultiArray()
+  #   motor_msg.data = [msg.data[0], msg.data[1]]
+  #   print(msg.data)
+  #   self.car.control_car(msg.data[0], msg.data[1])
   
-  def servo_callback(self, msg):
-    if msg.data[0] != self.servo1_angle:
-      self.car.set_servo(1, msg.data[0])
-      self.servo1_angle = msg.data[0]
-    if msg.data[1] != self.servo2_angle:
-      self.car.set_servo(2, msg.data[1])
-      self.servo2_angle = msg.data[1]
+  # def servo_callback(self, msg):
+  #   if msg.data[0] != self.servo1_angle:
+  #     self.car.set_servo(1, msg.data[0])
+  #     self.servo1_angle = msg.data[0]
+  #   if msg.data[1] != self.servo2_angle:
+  #     self.car.set_servo(2, msg.data[1])
+  #     self.servo2_angle = msg.data[1]
 
   def keyboard_callback(self, msg):
-    self.car.control_car(msg.data[0], msg.data[1])
-    if msg.data[0] == 0 and msg.data[1] == 0:
-      # Toggle E-stop and reset
-      print("E-STOP")
-      self.e_stop = not self.e_stop
-      self.state = States.RESET
-      self.completed = []
+    print(f"You pressed '{msg.data[0]}'")
+    match msg.data[0]:
+      case 'w':   # forward
+          self.car.control_car(MOTOR_POWER, MOTOR_POWER)
+      case 'a':   # left
+          self.car.control_car(-MOTOR_POWER, MOTOR_POWER)
+      case 's':   # back
+          self.car.control_car(-MOTOR_POWER, -MOTOR_POWER)
+      case 'd':   # right
+          self.car.control_car(MOTOR_POWER, -MOTOR_POWER)
+      case '0':   # State 0
+          self.state = States.SEARCH
+      case '1':   # State 1
+          self.state = States.ACQUIRE
+      case '2':   # State 2
+          self.state = States.FIND_GOAL
+      case '3':   # State 3
+          self.state = States.DELIVER
+      case '4':   # State 4
+          self.state = States.RESET
+      case _:   # Toggle E-stop and reset (default)
+          self.car.control_car(0, 0)
+          print("E-STOP")
+          self.e_stop = not self.e_stop
+          self.state = States.RESET
+          self.completed = []          
 
-  def publish_control(self):
-    motor_msg = Int32MultiArray()
-    motor_msg.data = self.current_control
-    print(self.current_control)
-    self.motor_publisher.publish(motor_msg)
+  # def publish_control(self):
+  #   motor_msg = Int32MultiArray()
+  #   motor_msg.data = self.current_control
+  #   print(self.current_control)
+  #   self.motor_publisher.publish(motor_msg)
 
-  def drive_square_callback(self, msg):
-    motor_msg = Int32MultiArray()
-    if msg.data:
-      for _ in range(4):
-        # Drive forward
-        motor_msg.data = [50, 50]
-        self.motor_publisher.publish(motor_msg)
-        self.car.control_car(50, 50)
-        time.sleep(3)
+  # def drive_square_callback(self, msg):
+  #   motor_msg = Int32MultiArray()
+  #   if msg.data:
+  #     for _ in range(4):
+  #       # Drive forward
+  #       motor_msg.data = [50, 50]
+  #       self.motor_publisher.publish(motor_msg)
+  #       self.car.control_car(50, 50)
+  #       time.sleep(3)
 
-        # Turn left
-        motor_msg.data = [-100, 50]
-        self.motor_publisher.publish(motor_msg)
-        self.car.control_car(-100, 50)
-        time.sleep(2)
+  #       # Turn left
+  #       motor_msg.data = [-100, 50]
+  #       self.motor_publisher.publish(motor_msg)
+  #       self.car.control_car(-100, 50)
+  #       time.sleep(2)
 
-    motor_msg.data = [0, 0]
-    self.motor_publisher.publish(motor_msg)
-    self.car.control_car(0,0)
+  #   motor_msg.data = [0, 0]
+  #   self.motor_publisher.publish(motor_msg)
+  #   self.car.control_car(0,0)
   
   def warehouse_control(self, msg):
     if msg.data and not self.e_stop:
@@ -167,7 +189,7 @@ class MinimalSubscriber(Node):
 
         case States.ACQUIRE:
           print("State: ACQUIRE")
-          if self.sonar_distance < .2: 
+          if self.sonar_distance < .05: 
             # self.package_received = True
             self.car.control_car(0, 0)
             self.state = States.FIND_GOAL
@@ -211,8 +233,8 @@ class MinimalSubscriber(Node):
 
   def april_tag_control(self, msg):
     # Recognize april tag, check if already completed
-    self.target_acquired = msg.data[0]
-    self.goal_found = msg.data[1]
+    self.target_acquired = msg.transforms[0]
+    self.goal_found = msg.transforms[1]
   
   def sonar_control(self, msg):
     self.sonar_distance = msg.range
