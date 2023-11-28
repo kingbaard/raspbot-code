@@ -176,7 +176,7 @@ class MinimalSubscriber(Node):
   #   self.motor_publisher.publish(motor_msg)
   #   self.car.control_car(0,0)
   
-  def warehouse_control(self, msg):
+  def warehouse_callback(self, msg):
     if msg.data and not self.e_stop:
       match (self.state):
         case States.SEARCH:
@@ -231,12 +231,12 @@ class MinimalSubscriber(Node):
     else:
       self.car.control_car(0, 0)
 
-  def april_tag_control(self, msg):
+  def april_tag_callback(self, msg):
     # Recognize april tag, check if already completed
     self.target_acquired = msg.transforms[0]
     self.goal_found = msg.transforms[1]
   
-  def sonar_control(self, msg):
+  def sonar_callback(self, msg):
     self.sonar_distance = msg.range
 
 class States(Enum):
