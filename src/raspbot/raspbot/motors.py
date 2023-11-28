@@ -123,25 +123,25 @@ class MinimalSubscriber(Node):
   #     self.servo2_angle = msg.data[1]
 
   def keyboard_callback(self, msg):
-    print(f"You pressed '{msg.data}'")
-    match msg.data:
-      case int('w'):   # forward
+    print(f"You pressed '{chr(msg.data)}'")
+    match chr(msg.data):
+      case 'w':   # forward
           self.car.control_car(MOTOR_POWER, MOTOR_POWER)
-      case int('a'):   # left
+      case 'a':   # left
           self.car.control_car(-MOTOR_POWER, MOTOR_POWER)
-      case int('s'):   # back
+      case 's':   # back
           self.car.control_car(-MOTOR_POWER, -MOTOR_POWER)
-      case int('d'):   # right
+      case 'd':   # right
           self.car.control_car(MOTOR_POWER, -MOTOR_POWER)
-      case int('0'):   # State 0
+      case '0':   # State 0
           self.state = States.SEARCH
-      case int('1'):   # State 1
+      case '1':   # State 1
           self.state = States.ACQUIRE
-      case int('2'):   # State 2
+      case '2':   # State 2
           self.state = States.FIND_GOAL
-      case int('3'):   # State 3
+      case '3':   # State 3
           self.state = States.DELIVER
-      case int('4'):   # State 4
+      case '4':   # State 4
           self.state = States.RESET
       case _:   # Toggle E-stop and reset (default)
           self.car.control_car(0, 0)
