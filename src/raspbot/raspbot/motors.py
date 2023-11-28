@@ -123,7 +123,6 @@ class MinimalSubscriber(Node):
   #     self.servo2_angle = msg.data[1]
 
   def keyboard_callback(self, msg):
-    print("HELLO WORLD")
     print(f"You pressed '{chr(msg.data)}'")
     match chr(msg.data):
       case 'w':   # forward
@@ -134,6 +133,12 @@ class MinimalSubscriber(Node):
           self.car.control_car(-MOTOR_POWER, -MOTOR_POWER)
       case 'd':   # right
           self.car.control_car(MOTOR_POWER, -MOTOR_POWER)
+      case 'e':   # Toggle E-stop and reset
+          self.car.control_car(0, 0)
+          self.e_stop = not self.e_stop
+          self.state = States.RESET
+          self.completed = []   
+          print(f"E-STOP = {'ON' if self.e_stop else 'OFF'}")
       case '0':   # State 0
           self.state = States.SEARCH
       case '1':   # State 1
@@ -144,12 +149,8 @@ class MinimalSubscriber(Node):
           self.state = States.DELIVER
       case '4':   # State 4
           self.state = States.RESET
-      case _:   # Toggle E-stop and reset (default)
-          self.car.control_car(0, 0)
-          print("E-STOP")
-          self.e_stop = not self.e_stop
-          self.state = States.RESET
-          self.completed = []          
+      case _:   # default
+          self.car.control_car(0, 0)        
 
   # def publish_control(self):
   #   motor_msg = Int32MultiArray()
