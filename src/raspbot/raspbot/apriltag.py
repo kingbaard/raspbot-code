@@ -35,8 +35,8 @@ class Apriltag(Node):
             detections = detector.detect(img)
 
             for detection in detections:
-                tag_id = detection.tag_id
-                tag_cx = detection.center[0]
+                tag_id = detection["tag_id"]
+                tag_cx = detection["center"][0]
                 payload = Int32MultiArray(data=[tag_id,tag_cx])
                 self.publisher.publish(payload)
 
