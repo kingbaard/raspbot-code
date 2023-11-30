@@ -37,7 +37,7 @@ class Apriltag(Node):
             for detection in detections:
                 # print(detection)
                 tag_id = detection["id"]
-                tag_cx = detection["center"][0]
+                tag_cx = int(detection["center"][0])
                 payload = Int32MultiArray(data=[tag_id,tag_cx])
                 self.publisher.publish(payload)
 
