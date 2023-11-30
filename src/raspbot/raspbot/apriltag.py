@@ -28,13 +28,14 @@ class Apriltag(Node):
             np_arr = np.frombuffer(image_msg.data, np.uint8)
             print("np_arr created")
             img = cv2.imdecode(np_arr, cv2.IMREAD_GRAYSCALE) # Try color if this doesn't work
-            print("cv_image created", img)
+            # print("cv_image created", img)
 
             detector = apriltag("tagStandard41h12")
 
             detections = detector.detect(img)
 
             for detection in detections:
+                print(detection)
                 tag_id = detection["tag_id"]
                 tag_cx = detection["center"][0]
                 payload = Int32MultiArray(data=[tag_id,tag_cx])
