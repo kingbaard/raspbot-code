@@ -17,6 +17,7 @@ import math
 # 1     | .0042 ish?
 
 MOTOR_POWER = 75
+APRIL_TAG_MIDDLE = 275
 
 class Car:
     def __init__(self):
@@ -185,25 +186,31 @@ class MinimalSubscriber(Node):
     if msg.data:
       while (not self.e_stop):
         # Pause for a second and reset april tag
+        print("pause 1")
         time.sleep(1)
         self.car.control_car(0, 0) 
         self.box_id = None
         self.box_x_pos = None
         self.goal_id = None
         self.goal_x_pos = None
+        print("pause 2")
         time.sleep(1)
 
         match (self.state):
           case States.SEARCH:
             print("State: SEARCH")
             if self.box_id and self.box_id not in self.completed:
+              print("if begin")
               # Found a new box to deliver
               self.target_box_id = self.box_id
               self.target_box_x_pos = self.box_x_pos
               self.car.control_car(0, 0)
               self.state = States.ACQUIRE
+              print("if end")
             else:
+              print("else begin")
               self.car.control_car(-MOTOR_POWER / 1.5, MOTOR_POWER)
+              print("else end")
 
           case States.ACQUIRE:
             print("State: ACQUIRE")
