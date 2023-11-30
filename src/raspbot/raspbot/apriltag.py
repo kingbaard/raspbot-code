@@ -1,17 +1,11 @@
 import cv2
 import numpy as np
 from apriltag import apriltag
-
-image_path = 'test.jpg'
-image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-detector = apriltag("tagStandard41h12")
-
-detections = detector.detect(image)
-
 import time
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import Image, CompressedImage, Int32MultiArray
+from sensor_msgs.msg import Image, CompressedImage
+from std_msgs.msg import Int32MultiArray
 import cv_bridge
 import cv2
 import numpy as np
@@ -34,15 +28,16 @@ class Apriltag(Node):
             np_arr = np.frombuffer(image_msg.data, np.uint8)
             print("np_arr created")
             img = cv2.imdecode(np_arr, cv2.IMREAD_GRAYSCALE) # Try color if this doesn't work
-            print("cv_image created", img)
+            # print("cv_image created", img)
 
             detector = apriltag("tagStandard41h12")
 
             detections = detector.detect(img)
 
             for detection in detections:
-                tag_id = detection.tag_id
-                tag_cx = detection.center[0]
+                # print(detection)
+                tag_id = detection["id"]
+                tag_cx = int(detection["center"][0])
                 payload = Int32MultiArray(data=[tag_id,tag_cx])
                 self.publisher.publish(payload)
 

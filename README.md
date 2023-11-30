@@ -24,6 +24,8 @@ docker run -it --rm --privileged -v ${PWD}/ros2_nodes:/root/ros2_ws/src humble
 
 ## To run our code
 
+- install libcap dev `$ sudo apt-get install build-essential libcap-dev`
+- install libcamera
 - cd into ```~/raspbot-code/```
 - Run: ```colcon build --symlink-install```
 - Run: ```source src/source.sh```
@@ -33,6 +35,8 @@ docker run -it --rm --privileged -v ${PWD}/ros2_nodes:/root/ros2_ws/src humble
   - ```ros2 run raspbot keyboard```
 - To run square:
   - ```ros2 topic pub /drive_square_control std_msgs/msg/Bool "{ data: True }" --once```
+- To run camera:
+  - `ros2 run v4l2_camera v4l2_camera_node --ros-args -p image_size:="[640, 480]"`
 - To run imu:
   - Make sure you are running motors
   - Then run:
