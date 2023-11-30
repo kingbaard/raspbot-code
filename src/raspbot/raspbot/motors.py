@@ -2,9 +2,8 @@ from enum import Enum
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import Char, Bool
+from std_msgs.msg import Char, Bool, Int32MultiArray
 from sensor_msgs.msg import Range
-from tf2_msgs.msg import TFMessage
 
 import smbus
 import time
@@ -18,6 +17,8 @@ import math
 # 1     | .0042 ish?
 
 MOTOR_POWER = 75
+MOTOR_OFFSET = 25
+APRIL_TAG_MIDDLE = 275
 
 class Car:
     def __init__(self):
@@ -85,7 +86,7 @@ class MinimalSubscriber(Node):
     # self.drive_square_subscription = self.create_subscription(Bool, '/drive_square_control', self.drive_square_callback, 10)
     self.keyboard_subscription = self.create_subscription(Char, '/keyboard_control', self.keyboard_callback, 10)
     self.warehouse_subscription = self.create_subscription(Bool, '/warehouse_control', self.warehouse_callback, 10)
-    self.april_tag_subscription = self.create_subscription(TFMessage, '/tf', self.april_tag_callback, 10)
+    self.april_tag_subscription = self.create_subscription(Int32MultiArray, '/apriltags', self.april_tag_callback, 10)
     self.sonar_subscription = self.create_subscription(Range, '/sonar', self.sonar_callback, 10)
 
     # IMU Publisher
@@ -100,11 +101,15 @@ class MinimalSubscriber(Node):
     self.e_stop = False
     self.state = States.SEARCH
     self.sonar_distance = None
+    self.box_id = None
+    self.box_x_pos = None
+    self.target_box_id = None
+    self.target_box_x_pos = None
+    self.goal_id = None
+    self.goal_x_pos = None
+    self.target_goal_id = None
+    self.target_goal_x_pos = None
     self.completed = []
-    self.target_acquired = False
-    self.package_received = False
-    self.goal_found = False
-    self.package_delivered = False
   
   # def motor_callback(self, msg):
   #   self.current_control = [msg.data[0], msg.data[1]]
@@ -179,64 +184,94 @@ class MinimalSubscriber(Node):
   #   self.car.control_car(0,0)
   
   def warehouse_callback(self, msg):
-    if msg.data and not self.e_stop:
-      match (self.state):
-        case States.SEARCH:
-          print("State: SEARCH")
-          if self.target_acquired:
+    if msg.data:
+      while (not self.e_stop):
+        # Pause for a second and reset april tag
+        print("pause 1")
+        time.sleep(1)
+        self.car.control_car(0, 0) 
+        self.box_id = None
+        self.box_x_pos = None
+        self.goal_id = None
+        self.goal_x_pos = None
+        print("pause 2")
+        time.sleep(1)
+
+        match (self.state):
+          case States.SEARCH:
+            print("State: SEARCH")
+            if self.box_id and self.box_id not in self.completed:
+              print("if begin")
+              # Found a new box to deliver
+              self.target_box_id = self.box_id
+              self.target_box_x_pos = self.box_x_pos
+              self.car.control_car(0, 0)
+              self.state = States.ACQUIRE
+              print("if end")
+            else:
+              print("else begin")
+              self.car.control_car(-MOTOR_POWER - MOTOR_OFFSET, MOTOR_POWER)
+              print("else end")
+
+          case States.ACQUIRE:
+            print("State: ACQUIRE")
+            if self.sonar_distance < .06: 
+              # Box acquired
+              self.car.control_car(0, 0)
+              self.state = States.FIND_GOAL
+            else:
+              self.car.control_car(MOTOR_POWER, MOTOR_POWER)
+
+          case States.FIND_GOAL:
+            print("State: FIND_GOAL")
+            if self.goal_id and self.goal_id == self.target_box_id + 3:
+              # Found correct goal
+              self.car.control_car(0, 0)
+              self.state = States.DELIVER
+            else:
+              self.car.control_car(-MOTOR_POWER - MOTOR_OFFSET, MOTOR_POWER) 
+
+          case States.DELIVER:
+            print("State: DELIVER")
+            if not self.goal_id:
+              # Arrived at goal (can't see goal april tag anymore)
+              self.car.control_car(0, 0)
+              self.completed.append(self.target_box_id)
+              self.state = States.RESET
+            else:
+              self.car.control_car(MOTOR_POWER, MOTOR_POWER)
+
+          case States.RESET:
+            print("State: RESET")
+            if self.sonar_distance >= 1 or self.sonar_distance == -1:
+              # Backed up now reset state and go again
+              self.car.control_car(0, 0)
+              self.state = States.SEARCH
+              self.box_id = None
+              self.box_x_pos = None
+              self.target_box_id = None
+              self.target_box_x_pos = None
+              self.goal_id = None
+              self.goal_x_pos = None
+              self.target_goal_id = None
+              self.target_goal_x_pos = None
+            else:
+              self.car.control_car(-MOTOR_POWER, -MOTOR_POWER)
+
+          case _:
+            print("ERROR")
+            self.e_stop = True
             self.car.control_car(0, 0)
-            self.state = States.ACQUIRE
-          else:
-            self.car.control_car(-MOTOR_POWER, MOTOR_POWER)
 
-        case States.ACQUIRE:
-          print("State: ACQUIRE")
-          if self.sonar_distance < .06: 
-            # self.package_received = True
-            self.car.control_car(0, 0)
-            self.state = States.FIND_GOAL
-          else:
-            self.car.control_car(MOTOR_POWER, MOTOR_POWER)
-
-        case States.FIND_GOAL:
-          print("State: FIND_GOAL")
-          if self.goal_found:
-            self.car.control_car(0, 0)
-            self.state = States.DELIVER
-          else:
-            self.car.control_car(-MOTOR_POWER, MOTOR_POWER) 
-
-        case States.DELIVER:
-          print("State: DELIVER")
-          if self.package_delivered:
-            self.car.control_car(0, 0)
-            # Add delivered box to completed boxes?
-            # self.completed.append()
-            self.state = States.RESET
-          else:
-            self.car.control_car(MOTOR_POWER, MOTOR_POWER)
-
-        case States.RESET:
-          print("State: RESET")
-          if self.sonar_distance >= 1 or self.sonar_distance == -1:
-            self.state = States.SEARCH
-            self.target_acquired = False
-            # self.package_received = False
-            self.goal_found = False
-            self.package_delivered = False
-          else:
-            self.car.control_car(-MOTOR_POWER, -MOTOR_POWER)
-
-        case _:
-          print("ERROR")
-          self.car.control_car(0, 0)
+      print("DONE")
+      self.car.control_car(0, 0)
     else:
       self.car.control_car(0, 0)
 
   def april_tag_callback(self, msg):
-    # Recognize april tag, check if already completed
-    self.target_acquired = msg.transforms[0]
-    self.goal_found = msg.transforms[1]
+    # msg.data = [id, x_pos]
+    self.april_tag_id = msg.data[0]
+    self.april_tag_x_pos = msg.data[1]
   
   def sonar_callback(self, msg):
     self.sonar_distance = msg.range
