@@ -1,13 +1,6 @@
 import cv2
 import numpy as np
 from apriltag import apriltag
-
-image_path = 'test.jpg'
-image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-detector = apriltag("tagStandard41h12")
-
-detections = detector.detect(image)
-
 import time
 import rclpy
 from rclpy.node import Node
