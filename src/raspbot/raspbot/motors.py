@@ -17,6 +17,7 @@ import math
 # 1     | .0042 ish?
 
 MOTOR_POWER = 75
+MOTOR_OFFSET = 25
 APRIL_TAG_MIDDLE = 275
 
 class Car:
@@ -209,7 +210,7 @@ class MinimalSubscriber(Node):
               print("if end")
             else:
               print("else begin")
-              self.car.control_car(-MOTOR_POWER / 1.5, MOTOR_POWER)
+              self.car.control_car(-MOTOR_POWER - MOTOR_OFFSET, MOTOR_POWER)
               print("else end")
 
           case States.ACQUIRE:
@@ -228,7 +229,7 @@ class MinimalSubscriber(Node):
               self.car.control_car(0, 0)
               self.state = States.DELIVER
             else:
-              self.car.control_car(-MOTOR_POWER / 1.5, MOTOR_POWER) 
+              self.car.control_car(-MOTOR_POWER - MOTOR_OFFSET, MOTOR_POWER) 
 
           case States.DELIVER:
             print("State: DELIVER")
