@@ -198,7 +198,6 @@ class MinimalSubscriber(Node):
           print("State: SEARCH")
           print(f"IN SEARCH: {self.target_box_id} at {self.target_box_x_pos}")
           if self.target_box_id is not None and self.target_box_id not in self.completed:
-            print("past if")
             # Found a new box to deliver
             # self.target_box_id = self.box_id
             # self.target_box_x_pos = self.box_x_pos
@@ -209,6 +208,7 @@ class MinimalSubscriber(Node):
 
         case States.ACQUIRE:
           print("State: ACQUIRE")
+          print(f"{self.sonar_distance}")
           if self.sonar_distance < .06: 
             # Box acquired
             self.car.control_car(0, 0)
