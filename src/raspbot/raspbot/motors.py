@@ -138,7 +138,7 @@ class MinimalSubscriber(Node):
           self.car.control_car(-MOTOR_POWER, -MOTOR_POWER)
       case 'd':   # right
           self.car.control_car(MOTOR_POWER, -MOTOR_POWER)
-      case 'e':   # Toggle E-stop and reset
+      case 'e':   # Toggle E-stop
           self.car.control_car(0, 0)
           self.e_stop = not self.e_stop
           print(f"E-STOP = {'ON' if self.e_stop else 'OFF'}")
@@ -182,99 +182,95 @@ class MinimalSubscriber(Node):
   #   self.car.control_car(0,0)
   
   def warehouse_callback(self, msg):
-    if msg.data:
-      while (not self.e_stop):
-        # Pause for a second and reset april tag
-        time.sleep(1)
-        self.car.control_car(0, 0) 
-        self.box_id = None
-        self.box_x_pos = None
-        self.goal_id = None
-        self.goal_x_pos = None
-        time.sleep(1)
+    if msg.data and not self.e_stop:
+      # Pause for a second and reset april tag
+      time.sleep(1)
+      self.car.control_car(0, 0) 
+      self.box_id = None
+      self.box_x_pos = None
+      self.goal_id = None
+      self.goal_x_pos = None
+      time.sleep(1)
 
-        match (self.state):
-          case States.SEARCH:
-            print("State: SEARCH")
-            if self.box_id and self.box_id not in self.completed:
-              # Found a new box to deliver
-              self.target_box_id = self.box_id
-              self.target_box_x_pos = self.box_x_pos
-              self.car.control_car(0, 0)
-              self.state = States.ACQUIRE
-            else:
-              self.car.control_car(-(MOTOR_POWER - MOTOR_OFFSET), MOTOR_POWER)
-
-          case States.ACQUIRE:
-            print("State: ACQUIRE")
-            if self.sonar_distance < .06: 
-              # Box acquired
-              self.car.control_car(0, 0)
-              self.state = States.FIND_GOAL
-            else:
-              if self.target_box_x_pos > APRIL_TAG_MIDDLE + 5:
-                # Slight turn right
-                self.car.control_car(50, -50)
-              elif self.target_box_x_pos < APRIL_TAG_MIDDLE - 5:
-                # Slight turn left
-                self.car.control_car(-50, 50)
-              else:
-                # Box centered
-                self.car.control_car(MOTOR_POWER, MOTOR_POWER)
-
-          case States.FIND_GOAL:
-            print("State: FIND_GOAL")
-            if self.goal_id and self.goal_id == self.target_box_id + 3:
-              # Found correct goal
-              self.target_goal_id = self.goal_id
-              self.target_goal_x_pos = self.goal_x_pos
-              self.car.control_car(0, 0)
-              self.state = States.DELIVER
-            else:
-              self.car.control_car(-(MOTOR_POWER - MOTOR_OFFSET), MOTOR_POWER) 
-
-          case States.DELIVER:
-            print("State: DELIVER")
-            if not self.goal_id:
-              # Arrived at goal (can't see goal april tag anymore)
-              self.completed.append(self.target_box_id)
-              self.car.control_car(0, 0)
-              self.state = States.RESET
-            else:
-              if self.target_goal_x_pos > APRIL_TAG_MIDDLE + 5:
-                # Slight turn right
-                self.car.control_car(50, -50)
-              elif self.target_goal_x_pos < APRIL_TAG_MIDDLE - 5:
-                # Slight turn left
-                self.car.control_car(-50, 50)
-              else:
-                # Goal centered
-                self.car.control_car(MOTOR_POWER, MOTOR_POWER)
-
-          case States.RESET:
-            print("State: RESET")
-            if self.sonar_distance >= 1 or self.sonar_distance == -1:
-              # Backed up now reset state and go again
-              self.car.control_car(0, 0)
-              self.state = States.SEARCH
-              self.box_id = None
-              self.box_x_pos = None
-              self.target_box_id = None
-              self.target_box_x_pos = None
-              self.goal_id = None
-              self.goal_x_pos = None
-              self.target_goal_id = None
-              self.target_goal_x_pos = None
-            else:
-              self.car.control_car(-MOTOR_POWER, -MOTOR_POWER)
-
-          case _:
-            print("ERROR")
-            self.e_stop = True
+      match (self.state):
+        case States.SEARCH:
+          print("State: SEARCH")
+          if self.box_id and self.box_id not in self.completed:
+            # Found a new box to deliver
+            self.target_box_id = self.box_id
+            self.target_box_x_pos = self.box_x_pos
             self.car.control_car(0, 0)
+            self.state = States.ACQUIRE
+          else:
+            self.car.control_car(-(MOTOR_POWER - MOTOR_OFFSET), MOTOR_POWER)
 
-      print("DONE")
-      self.car.control_car(0, 0)
+        case States.ACQUIRE:
+          print("State: ACQUIRE")
+          if self.sonar_distance < .06: 
+            # Box acquired
+            self.car.control_car(0, 0)
+            self.state = States.FIND_GOAL
+          else:
+            if self.target_box_x_pos > APRIL_TAG_MIDDLE + 5:
+              # Slight turn right
+              self.car.control_car(50, -50)
+            elif self.target_box_x_pos < APRIL_TAG_MIDDLE - 5:
+              # Slight turn left
+              self.car.control_car(-50, 50)
+            else:
+              # Box centered
+              self.car.control_car(MOTOR_POWER, MOTOR_POWER)
+
+        case States.FIND_GOAL:
+          print("State: FIND_GOAL")
+          if self.goal_id and self.goal_id == self.target_box_id + 3:
+            # Found correct goal
+            self.target_goal_id = self.goal_id
+            self.target_goal_x_pos = self.goal_x_pos
+            self.car.control_car(0, 0)
+            self.state = States.DELIVER
+          else:
+            self.car.control_car(-(MOTOR_POWER - MOTOR_OFFSET), MOTOR_POWER) 
+
+        case States.DELIVER:
+          print("State: DELIVER")
+          if not self.goal_id:
+            # Arrived at goal (can't see goal april tag anymore)
+            self.completed.append(self.target_box_id)
+            self.car.control_car(0, 0)
+            self.state = States.RESET
+          else:
+            if self.target_goal_x_pos > APRIL_TAG_MIDDLE + 5:
+              # Slight turn right
+              self.car.control_car(50, -50)
+            elif self.target_goal_x_pos < APRIL_TAG_MIDDLE - 5:
+              # Slight turn left
+              self.car.control_car(-50, 50)
+            else:
+              # Goal centered
+              self.car.control_car(MOTOR_POWER, MOTOR_POWER)
+
+        case States.RESET:
+          print("State: RESET")
+          if self.sonar_distance >= 1 or self.sonar_distance == -1:
+            # Backed up now reset state and go again
+            self.car.control_car(0, 0)
+            self.state = States.SEARCH
+            self.box_id = None
+            self.box_x_pos = None
+            self.target_box_id = None
+            self.target_box_x_pos = None
+            self.goal_id = None
+            self.goal_x_pos = None
+            self.target_goal_id = None
+            self.target_goal_x_pos = None
+          else:
+            self.car.control_car(-MOTOR_POWER, -MOTOR_POWER)
+
+        case _:
+          print("ERROR")
+          self.e_stop = True
+          self.car.control_car(0, 0)
     else:
       self.car.control_car(0, 0)
 
