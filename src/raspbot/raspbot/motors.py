@@ -289,7 +289,8 @@ class MinimalSubscriber(Node):
       print(f"FOUND GOAL {msg.data[0]} AT {msg.data[1]}")
       self.goal_id = msg.data[0]
       self.goal_x_pos = msg.data[1]
-      if self.goal_id == self.target_goal_id:
+      if self.target_goal_id is None or self.goal_id == self.target_goal_id:
+         self.target_goal_id = self.goal_id
          self.target_goal_x_pos = self.goal_x_pos
   
   def sonar_callback(self, msg):
