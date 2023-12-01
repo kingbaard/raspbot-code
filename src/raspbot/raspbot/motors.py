@@ -238,6 +238,7 @@ class MinimalSubscriber(Node):
           if not self.goal_id:
             # Arrived at goal (can't see goal april tag anymore)
             self.completed.append(self.target_box_id)
+            self.completed.append(self.target_goal_id)
             self.car.control_car(0, 0)
             self.state = States.RESET
           else:
@@ -289,7 +290,7 @@ class MinimalSubscriber(Node):
       print(f"FOUND GOAL {msg.data[0]} AT {msg.data[1]}")
       self.goal_id = msg.data[0]
       self.goal_x_pos = msg.data[1]
-      if self.target_goal_id is None or self.goal_id == self.target_goal_id:
+      if (self.target_goal_id is None or self.goal_id == self.target_goal_id) and self.goal_id not in self.completed:
          self.target_goal_id = self.goal_id
          self.target_goal_x_pos = self.goal_x_pos
   
