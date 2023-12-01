@@ -114,6 +114,8 @@ class MinimalSubscriber(Node):
     self.target_goal_id = None
     self.target_goal_x_pos = None
     self.completed = []
+    self.old_time = time.time()
+    self.tag_memory = {}
   
   # def motor_callback(self, msg):
   #   self.current_control = [msg.data[0], msg.data[1]]
@@ -158,37 +160,15 @@ class MinimalSubscriber(Node):
           self.state = States.RESET
       case _:   # default
           self.car.control_car(0, 0)        
-
-  # def publish_control(self):
-  #   motor_msg = Int32MultiArray()
-  #   motor_msg.data = self.current_control
-  #   print(self.current_control)
-  #   self.motor_publisher.publish(motor_msg)
-
-  # def drive_square_callback(self, msg):
-  #   motor_msg = Int32MultiArray()
-  #   if msg.data:
-  #     for _ in range(4):
-  #       # Drive forward
-  #       motor_msg.data = [50, 50]
-  #       self.motor_publisher.publish(motor_msg)
-  #       self.car.control_car(50, 50)
-  #       time.sleep(3)
-
-  #       # Turn left
-  #       motor_msg.data = [-100, 50]
-  #       self.motor_publisher.publish(motor_msg)
-  #       self.car.control_car(-100, 50)
-  #       time.sleep(2)
-
-  #   motor_msg.data = [0, 0]
-  #   self.motor_publisher.publish(motor_msg)
-  #   self.car.control_car(0,0)
   
   def warehouse_callback(self, msg):
     if msg.data and not self.e_stop:
-      # Pause for a second and reset april tag
-      time.sleep(SLEEP_TIME)
+      # Handle Clock Management
+      elapsed = time.time() - self.old_time
+      self.old_time = time.time()
+
+      self.update_tag_memory(elapsed)
+
       self.car.control_car(0, 0) 
       self.box_id = None
       self.box_x_pos = None
@@ -226,16 +206,21 @@ class MinimalSubscriber(Node):
         case States.FIND_GOAL:
           print("State: FIND_GOAL")
           print(f"target goal {self.target_goal_id} target box {self.target_box_id}")
-          if self.target_goal_id is not None and self.target_goal_id == self.target_box_id + 3:
+          if self.target_goal_id in self.tag_memory and self.tag_memory[self.target_goal_id]['valid'] > 0:
             # Found correct goal
             self.car.control_car(0, 0)
             self.state = States.DELIVER
+            self.delivery_start = True
           else:
             self.car.control_car(-(MOTOR_POWER - MOTOR_OFFSET), MOTOR_POWER) 
 
         case States.DELIVER:
           print("State: DELIVER")
-          if not self.goal_id:
+          if self.tag_memory[self.target_goal_id]['valid'] <= 0:
+            if self.delivery_start:
+               # Uh oh, we lost the goal, going back to find goal
+               self.state = States.FIND_GOAL
+               return
             # Arrived at goal (can't see goal april tag anymore)
             self.completed.append(self.target_box_id)
             self.car.control_car(0, 0)
@@ -249,6 +234,7 @@ class MinimalSubscriber(Node):
               self.car.control_car(-50, 50)
             else:
               # Goal centered
+              self.delivery_start = False
               self.car.control_car(MOTOR_POWER, MOTOR_POWER)
 
         case States.RESET:
@@ -275,9 +261,16 @@ class MinimalSubscriber(Node):
     else:
       self.car.control_car(0, 0)
 
+  def update_tag_memory(self, elapsed_time):
+     for tag in self.tag_memory:
+        tag['valid'] -= elapsed_time
+        if tag['valid'] < 0:
+           tag['valid'] = 0
+
   def april_tag_callback(self, msg):
     # msg.data = [id, x_pos]
     print(f"{msg.data}")
+    self.tag_memory[msg.data[0]] = {"pos": msg.data[1], "valid":0.5}
     if msg.data[0] < 3:
       print(f"FOUND BOX {msg.data[0]} AT {msg.data[1]}")
       self.box_id = msg.data[0]
