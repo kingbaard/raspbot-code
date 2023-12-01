@@ -197,7 +197,7 @@ class MinimalSubscriber(Node):
         case States.SEARCH:
           print("State: SEARCH")
           # print(f"IN SEARCH: {self.box_id} at {self.box_x_pos}")
-          if self.target_box_id and self.target_box_id not in self.completed:
+          if self.target_box_id is not None and self.target_box_id not in self.completed:
             # Found a new box to deliver
             # self.target_box_id = self.box_id
             # self.target_box_x_pos = self.box_x_pos
@@ -225,10 +225,10 @@ class MinimalSubscriber(Node):
 
         case States.FIND_GOAL:
           print("State: FIND_GOAL")
-          if self.goal_id and self.goal_id == self.target_box_id + 3:
+          if self.target_goal_id is not None and self.target_goal_id == self.target_box_id + 3:
             # Found correct goal
-            self.target_goal_id = self.goal_id
-            self.target_goal_x_pos = self.goal_x_pos
+            # self.target_goal_id = self.goal_id
+            # self.target_goal_x_pos = self.goal_x_pos
             self.car.control_car(0, 0)
             self.state = States.DELIVER
           else:
