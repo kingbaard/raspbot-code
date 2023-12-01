@@ -18,11 +18,10 @@ import math
 # 200   | .765
 # 1     | .0042 ish?
 
-MOTOR_POWER = 75
-MOTOR_OFFSET = 25
+MOTOR_POWER = 50
+MOTOR_OFFSET = 15
 APRIL_TAG_MIDDLE = 275
 APRIL_TAG_OFFSET = 30
-SLEEP_TIME = .5
 
 class Car:
     def __init__(self):
