@@ -1,4 +1,6 @@
 from enum import Enum
+
+import numpy as np
 import rclpy
 from rclpy.node import Node
 
@@ -209,7 +211,7 @@ class MinimalSubscriber(Node):
         case States.ACQUIRE:
           print("State: ACQUIRE")
           print(f"{self.sonar_distance}")
-          if self.sonar_distance < .06 and self.sonar_distance != -1: 
+          if self.sonar_distance < .06: 
             # Box acquired
             self.car.control_car(0, 0)
             self.state = States.FIND_GOAL
@@ -255,7 +257,7 @@ class MinimalSubscriber(Node):
 
         case States.RESET:
           print("State: RESET")
-          if self.sonar_distance >= 1 or self.sonar_distance == -1:
+          if self.sonar_distance >= 1:
             # Backed up now reset state and go again
             self.car.control_car(0, 0)
             self.state = States.SEARCH
@@ -295,6 +297,8 @@ class MinimalSubscriber(Node):
          self.target_goal_x_pos = self.goal_x_pos
   
   def sonar_callback(self, msg):
+    if msg.range < 0:
+       self.sonar_distance = np.inf
     self.sonar_distance = msg.range
 
 class States(Enum):
