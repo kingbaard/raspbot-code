@@ -169,13 +169,6 @@ class MinimalSubscriber(Node):
 
       self.update_tag_memory(elapsed)
 
-      self.car.control_car(0, 0) 
-      self.box_id = None
-      self.box_x_pos = None
-      self.goal_id = None
-      self.goal_x_pos = None
-      time.sleep(SLEEP_TIME)
-
       match (self.state):
         case States.SEARCH:
           print("State: SEARCH")
