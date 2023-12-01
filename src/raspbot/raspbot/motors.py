@@ -141,8 +141,6 @@ class MinimalSubscriber(Node):
       case 'e':   # Toggle E-stop and reset
           self.car.control_car(0, 0)
           self.e_stop = not self.e_stop
-          self.state = States.RESET
-          self.completed = []   
           print(f"E-STOP = {'ON' if self.e_stop else 'OFF'}")
       case '0':   # State 0
           self.state = States.SEARCH
@@ -214,12 +212,22 @@ class MinimalSubscriber(Node):
               self.car.control_car(0, 0)
               self.state = States.FIND_GOAL
             else:
-              self.car.control_car(MOTOR_POWER, MOTOR_POWER)
+              if self.target_box_x_pos > APRIL_TAG_MIDDLE + 5:
+                # Slight turn right
+                self.car.control_car(50, -50)
+              elif self.target_box_x_pos < APRIL_TAG_MIDDLE - 5:
+                # Slight turn left
+                self.car.control_car(-50, 50)
+              else:
+                # Box centered
+                self.car.control_car(MOTOR_POWER, MOTOR_POWER)
 
           case States.FIND_GOAL:
             print("State: FIND_GOAL")
             if self.goal_id and self.goal_id == self.target_box_id + 3:
               # Found correct goal
+              self.target_goal_id = self.goal_id
+              self.target_goal_x_pos = self.goal_x_pos
               self.car.control_car(0, 0)
               self.state = States.DELIVER
             else:
@@ -229,11 +237,19 @@ class MinimalSubscriber(Node):
             print("State: DELIVER")
             if not self.goal_id:
               # Arrived at goal (can't see goal april tag anymore)
-              self.car.control_car(0, 0)
               self.completed.append(self.target_box_id)
+              self.car.control_car(0, 0)
               self.state = States.RESET
             else:
-              self.car.control_car(MOTOR_POWER, MOTOR_POWER)
+              if self.target_goal_x_pos > APRIL_TAG_MIDDLE + 5:
+                # Slight turn right
+                self.car.control_car(50, -50)
+              elif self.target_goal_x_pos < APRIL_TAG_MIDDLE - 5:
+                # Slight turn left
+                self.car.control_car(-50, 50)
+              else:
+                # Goal centered
+                self.car.control_car(MOTOR_POWER, MOTOR_POWER)
 
           case States.RESET:
             print("State: RESET")
@@ -264,8 +280,16 @@ class MinimalSubscriber(Node):
 
   def april_tag_callback(self, msg):
     # msg.data = [id, x_pos]
-    self.april_tag_id = msg.data[0]
-    self.april_tag_x_pos = msg.data[1]
+    if msg.data[0] < 3:
+      self.box_id = msg.data[0]
+      self.box_x_pos = msg.data[1]
+      if self.box_id == self.target_box_id:
+         self.target_box_x_pos = self.box_x_pos
+    else:
+      self.goal_id = msg.data[0]
+      self.goal_x_pos = msg.data[1]
+      if self.goal_id == self.target_goal_id:
+         self.target_goal_x_pos = self.goal_x_pos
   
   def sonar_callback(self, msg):
     self.sonar_distance = msg.range
