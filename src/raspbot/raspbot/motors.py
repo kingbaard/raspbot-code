@@ -299,7 +299,8 @@ class MinimalSubscriber(Node):
   def sonar_callback(self, msg):
     if msg.range < 0:
        self.sonar_distance = np.inf
-    self.sonar_distance = msg.range
+    else:
+      self.sonar_distance = msg.range
 
 class States(Enum):
   SEARCH = 0
