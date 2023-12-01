@@ -209,7 +209,7 @@ class MinimalSubscriber(Node):
         case States.ACQUIRE:
           print("State: ACQUIRE")
           print(f"{self.sonar_distance}")
-          if self.sonar_distance < .06: 
+          if self.sonar_distance < .06 and self.sonar_distance != -1: 
             # Box acquired
             self.car.control_car(0, 0)
             self.state = States.FIND_GOAL
