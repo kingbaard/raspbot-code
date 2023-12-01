@@ -196,8 +196,9 @@ class MinimalSubscriber(Node):
       match (self.state):
         case States.SEARCH:
           print("State: SEARCH")
-          # print(f"IN SEARCH: {self.box_id} at {self.box_x_pos}")
+          print(f"IN SEARCH: {self.target_box_id} at {self.target_box_x_pos}")
           if self.target_box_id is not None and self.target_box_id not in self.completed:
+            print("past if")
             # Found a new box to deliver
             # self.target_box_id = self.box_id
             # self.target_box_x_pos = self.box_x_pos
@@ -283,7 +284,8 @@ class MinimalSubscriber(Node):
       print(f"FOUND BOX {msg.data[0]} AT {msg.data[1]}")
       self.box_id = msg.data[0]
       self.box_x_pos = msg.data[1]
-      if self.box_id == self.target_box_id:
+      if self.target_box_id is None or self.box_id == self.target_box_id:
+         self.target_box_id = self.box_id
          self.target_box_x_pos = self.box_x_pos
     else:
       print(f"FOUND GOAL {msg.data[0]} AT {msg.data[1]}")
