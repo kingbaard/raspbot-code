@@ -254,7 +254,7 @@ class MinimalSubscriber(Node):
       self.car.control_car(0, 0)
 
   def update_tag_memory(self, elapsed_time):
-     for tag in self.tag_memory:
+     for tag in self.tag_memory.values():
         tag['valid'] -= elapsed_time
         if tag['valid'] < 0:
            tag['valid'] = 0
