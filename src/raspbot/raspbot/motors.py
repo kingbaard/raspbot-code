@@ -199,7 +199,7 @@ class MinimalSubscriber(Node):
       match (self.state):
         case States.SEARCH:
           print("State: SEARCH")
-          if self.target_box_id is not None and self.target_box_id not in self.completed:
+          if self.target_box_id is not None:
             self.car.control_car(0, 0)
             self.state = States.ACQUIRE
           else:
@@ -282,7 +282,7 @@ class MinimalSubscriber(Node):
       print(f"FOUND BOX {msg.data[0]} AT {msg.data[1]}")
       self.box_id = msg.data[0]
       self.box_x_pos = msg.data[1]
-      if self.target_box_id is None or self.box_id == self.target_box_id:
+      if (self.target_box_id is None or self.box_id == self.target_box_id) and self.box_id not in self.completed:
          self.target_box_id = self.box_id
          self.target_box_x_pos = self.box_x_pos
     else:
