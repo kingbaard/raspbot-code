@@ -188,13 +188,15 @@ class MinimalSubscriber(Node):
   def warehouse_callback(self, msg):
     if msg.data and not self.e_stop:
       # Pause for a second and reset april tag
-      time.sleep(SLEEP_TIME)
-      self.car.control_car(0, 0) 
-      self.box_id = None
-      self.box_x_pos = None
-      self.goal_id = None
-      self.goal_x_pos = None
-      time.sleep(SLEEP_TIME)
+      # time.sleep(SLEEP_TIME)
+      # self.car.control_car(0, 0) 
+      # self.box_id = None
+      # self.box_x_pos = None
+      # self.goal_id = None
+      # self.goal_x_pos = None
+      # time.sleep(SLEEP_TIME)
+
+      
 
       match (self.state):
         case States.SEARCH:
