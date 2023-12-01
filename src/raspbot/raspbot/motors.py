@@ -21,7 +21,7 @@ import math
 MOTOR_POWER = 75
 MOTOR_OFFSET = 25
 APRIL_TAG_MIDDLE = 275
-APRIL_TAG_OFFSET = 15
+APRIL_TAG_OFFSET = 30
 SLEEP_TIME = .5
 
 class Car:
@@ -199,11 +199,7 @@ class MinimalSubscriber(Node):
       match (self.state):
         case States.SEARCH:
           print("State: SEARCH")
-          print(f"IN SEARCH: {self.target_box_id} at {self.target_box_x_pos}")
           if self.target_box_id is not None and self.target_box_id not in self.completed:
-            # Found a new box to deliver
-            # self.target_box_id = self.box_id
-            # self.target_box_x_pos = self.box_x_pos
             self.car.control_car(0, 0)
             self.state = States.ACQUIRE
           else:
@@ -229,10 +225,9 @@ class MinimalSubscriber(Node):
 
         case States.FIND_GOAL:
           print("State: FIND_GOAL")
+          print(f"target goal {self.target_goal_id} target box {self.target_box_id}")
           if self.target_goal_id is not None and self.target_goal_id == self.target_box_id + 3:
             # Found correct goal
-            # self.target_goal_id = self.goal_id
-            # self.target_goal_x_pos = self.goal_x_pos
             self.car.control_car(0, 0)
             self.state = States.DELIVER
           else:
@@ -246,10 +241,10 @@ class MinimalSubscriber(Node):
             self.car.control_car(0, 0)
             self.state = States.RESET
           else:
-            if self.target_goal_x_pos > APRIL_TAG_MIDDLE + 5:
+            if self.target_goal_x_pos > APRIL_TAG_MIDDLE + APRIL_TAG_OFFSET:
               # Slight turn right
               self.car.control_car(50, -50)
-            elif self.target_goal_x_pos < APRIL_TAG_MIDDLE - 5:
+            elif self.target_goal_x_pos < APRIL_TAG_MIDDLE - APRIL_TAG_OFFSET:
               # Slight turn left
               self.car.control_car(-50, 50)
             else:
