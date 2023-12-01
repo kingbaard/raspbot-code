@@ -19,6 +19,7 @@ import math
 MOTOR_POWER = 75
 MOTOR_OFFSET = 25
 APRIL_TAG_MIDDLE = 275
+SLEEP_TIME = .5
 
 class Car:
     def __init__(self):
@@ -184,22 +185,22 @@ class MinimalSubscriber(Node):
   def warehouse_callback(self, msg):
     if msg.data and not self.e_stop:
       # Pause for a second and reset april tag
-      time.sleep(1)
+      time.sleep(SLEEP_TIME)
       self.car.control_car(0, 0) 
       self.box_id = None
       self.box_x_pos = None
       self.goal_id = None
       self.goal_x_pos = None
-      time.sleep(1)
+      time.sleep(SLEEP_TIME)
 
       match (self.state):
         case States.SEARCH:
           print("State: SEARCH")
-          print(f"IN SEARCH: {self.box_id} at {self.box_x_pos}")
-          if self.box_id and self.box_id not in self.completed:
+          # print(f"IN SEARCH: {self.box_id} at {self.box_x_pos}")
+          if self.target_box_id and self.target_box_id not in self.completed:
             # Found a new box to deliver
-            self.target_box_id = self.box_id
-            self.target_box_x_pos = self.box_x_pos
+            # self.target_box_id = self.box_id
+            # self.target_box_x_pos = self.box_x_pos
             self.car.control_car(0, 0)
             self.state = States.ACQUIRE
           else:
