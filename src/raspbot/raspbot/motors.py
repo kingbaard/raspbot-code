@@ -21,6 +21,7 @@ import math
 MOTOR_POWER = 75
 MOTOR_OFFSET = 25
 APRIL_TAG_MIDDLE = 275
+APRIL_TAG_OFFSET = 15
 SLEEP_TIME = .5
 
 class Car:
@@ -216,10 +217,10 @@ class MinimalSubscriber(Node):
             self.car.control_car(0, 0)
             self.state = States.FIND_GOAL
           else:
-            if self.target_box_x_pos > APRIL_TAG_MIDDLE + 5:
+            if self.target_box_x_pos > APRIL_TAG_MIDDLE + APRIL_TAG_OFFSET:
               # Slight turn right
               self.car.control_car(50, -50)
-            elif self.target_box_x_pos < APRIL_TAG_MIDDLE - 5:
+            elif self.target_box_x_pos < APRIL_TAG_MIDDLE - APRIL_TAG_OFFSET:
               # Slight turn left
               self.car.control_car(-50, 50)
             else:
