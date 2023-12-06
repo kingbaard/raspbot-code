@@ -117,6 +117,7 @@ class MinimalSubscriber(Node):
     self.tag_memory = {}
     self.action_clock = 0
     self.is_driving = False
+    self.last_turned_left = False
   
   # def motor_callback(self, msg):
   #   self.current_control = [msg.data[0], msg.data[1]]
@@ -169,6 +170,8 @@ class MinimalSubscriber(Node):
             self.old_time = time.time()
             self.update_tag_memory(elapsed)
             self.update_is_driving(elapsed)
+            acceptable_delta = APRIL_TAG_OFFSET/self.sonar_distance
+            print('acceptable_delta:',acceptable_delta)
             if not self.is_driving:
                 self.car.control_car(0,0)
             match (self.state):
@@ -185,19 +188,24 @@ class MinimalSubscriber(Node):
                     print("State: ACQUIRE")
                     print(f"{self.sonar_distance}")
                     if self.tag_memory[self.target_box_id]['valid'] == 0:
-                        self.target_box_x_pos = 0
+                        if self.last_turned_left:
+                            self.target_box_x_pos = 500
+                        else:
+                            self.target_box_x_pos = 0
                     if self.sonar_distance < .075: 
                         # Box acquired
                         self.car.control_car(0, 0)
                         self.state = States.FIND_GOAL
                     else:
                         if self.is_driving:
-                            if self.target_box_x_pos > APRIL_TAG_MIDDLE + (APRIL_TAG_OFFSET/self.sonar_distance):
+                            if self.target_box_x_pos > APRIL_TAG_MIDDLE + acceptable_delta:
                             # Slight turn right
                                 self.car.control_car(MOTOR_POWER, -MOTOR_POWER)
-                            elif self.target_box_x_pos < APRIL_TAG_MIDDLE - (APRIL_TAG_OFFSET/self.sonar_distance):
+                                self.last_turned_left = False
+                            elif self.target_box_x_pos < APRIL_TAG_MIDDLE - acceptable_delta:
                             # Slight turn left
                                 self.car.control_car(-MOTOR_POWER, MOTOR_POWER)
+                                self.last_turned_left = True
                             else:
                             # Box centered
                                 self.car.control_car(MOTOR_POWER, MOTOR_POWER)
@@ -227,10 +235,10 @@ class MinimalSubscriber(Node):
                         self.state = States.RESET
                     else:
                         if self.is_driving:
-                            if self.target_goal_x_pos > APRIL_TAG_MIDDLE + (APRIL_TAG_OFFSET/self.sonar_distance):
+                            if self.target_goal_x_pos > APRIL_TAG_MIDDLE + acceptable_delta:
                                 # Slight turn right
                                 self.car.control_car(MOTOR_POWER, -MOTOR_POWER)
-                            elif self.target_goal_x_pos < APRIL_TAG_MIDDLE - (APRIL_TAG_OFFSET/self.sonar_distance):
+                            elif self.target_goal_x_pos < APRIL_TAG_MIDDLE - acceptable_delta:
                                 # Slight turn left
                                 self.car.control_car(-MOTOR_POWER, MOTOR_POWER)
                             else:
