@@ -220,10 +220,10 @@ class MinimalSubscriber(Node):
           else:
             if self.target_goal_x_pos > APRIL_TAG_MIDDLE + APRIL_TAG_OFFSET:
               # Slight turn right
-              self.car.control_car(50, -50)
+              self.car.control_car(MOTOR_POWER, -MOTOR_POWER)
             elif self.target_goal_x_pos < APRIL_TAG_MIDDLE - APRIL_TAG_OFFSET:
               # Slight turn left
-              self.car.control_car(-50, 50)
+              self.car.control_car(-MOTOR_POWER, MOTOR_POWER)
             else:
               # Goal centered
               self.delivery_start = False
