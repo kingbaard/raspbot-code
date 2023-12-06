@@ -262,7 +262,7 @@ class MinimalSubscriber(Node):
   def april_tag_callback(self, msg):
     # msg.data = [id, x_pos]
     print(f"{msg.data}")
-    self.tag_memory[msg.data[0]] = {"pos": msg.data[1], "valid":0.5}
+    self.tag_memory[msg.data[0]] = {"pos": msg.data[1], "valid":1.5}
     if msg.data[0] < 3:
       print(f"FOUND BOX {msg.data[0]} AT {msg.data[1]}")
       self.box_id = msg.data[0]
