@@ -184,6 +184,8 @@ class MinimalSubscriber(Node):
                 case States.ACQUIRE:
                     print("State: ACQUIRE")
                     print(f"{self.sonar_distance}")
+                    if self.tag_memory[self.target_box_id]['valid'] == 0:
+                        self.target_box_x_pos = 0
                     if self.sonar_distance < .075: 
                         # Box acquired
                         self.car.control_car(0, 0)
