@@ -21,7 +21,7 @@ import math
 MOTOR_POWER = 50
 MOTOR_OFFSET = 15
 APRIL_TAG_MIDDLE = 275
-APRIL_TAG_OFFSET = 50
+APRIL_TAG_OFFSET = 100
 
 class Car:
     def __init__(self):
@@ -190,10 +190,10 @@ class MinimalSubscriber(Node):
                         self.state = States.FIND_GOAL
                     else:
                         if self.is_driving:
-                            if self.target_box_x_pos > APRIL_TAG_MIDDLE + APRIL_TAG_OFFSET:
+                            if self.target_box_x_pos > APRIL_TAG_MIDDLE + (APRIL_TAG_OFFSET/self.sonar_distance):
                             # Slight turn right
                                 self.car.control_car(MOTOR_POWER, -MOTOR_POWER)
-                            elif self.target_box_x_pos < APRIL_TAG_MIDDLE - APRIL_TAG_OFFSET:
+                            elif self.target_box_x_pos < APRIL_TAG_MIDDLE - (APRIL_TAG_OFFSET/self.sonar_distance):
                             # Slight turn left
                                 self.car.control_car(-MOTOR_POWER, MOTOR_POWER)
                             else:
@@ -225,10 +225,10 @@ class MinimalSubscriber(Node):
                         self.state = States.RESET
                     else:
                         if self.is_driving:
-                            if self.target_goal_x_pos > APRIL_TAG_MIDDLE + APRIL_TAG_OFFSET:
+                            if self.target_goal_x_pos > APRIL_TAG_MIDDLE + (APRIL_TAG_OFFSET/self.sonar_distance):
                                 # Slight turn right
                                 self.car.control_car(MOTOR_POWER, -MOTOR_POWER)
-                            elif self.target_goal_x_pos < APRIL_TAG_MIDDLE - APRIL_TAG_OFFSET:
+                            elif self.target_goal_x_pos < APRIL_TAG_MIDDLE - (APRIL_TAG_OFFSET/self.sonar_distance):
                                 # Slight turn left
                                 self.car.control_car(-MOTOR_POWER, MOTOR_POWER)
                             else:
@@ -302,7 +302,7 @@ class MinimalSubscriber(Node):
   
   def sonar_callback(self, msg):
     if msg.range < 0:
-      self.sonar_distance = np.inf
+      self.sonar_distance = 4
     else:
       self.sonar_distance = msg.range
 
