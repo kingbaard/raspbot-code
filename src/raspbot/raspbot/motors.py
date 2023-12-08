@@ -117,7 +117,7 @@ class MinimalSubscriber(Node):
     self.action_clock = 0
     self.is_driving = False
     self.last_turned_left = False
-    self.last_5_sonars = [4, 4, 4, 4, 4]
+    self.last_sonars = [4 for x in range(20)]
   
   # def motor_callback(self, msg):
   #   self.current_control = [msg.data[0], msg.data[1]]
@@ -315,9 +315,9 @@ class MinimalSubscriber(Node):
           range = 4
       else:
           range = msg.range
-      self.last_5_sonars.append(range)
-      self.last_5_sonars = self.last_5_sonars[1:]
-      self.sonar_distance = np.average(self.last_5_sonars)
+      self.last_sonars.append(range)
+      self.last_sonars = self.last_sonars[1:]
+      self.sonar_distance = np.average(self.last_sonars)
 
 class States(Enum):
   SEARCH = 0
