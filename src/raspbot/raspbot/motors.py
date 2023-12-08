@@ -117,7 +117,7 @@ class MinimalSubscriber(Node):
     self.action_clock = 0
     self.is_driving = False
     self.last_turned_left = False
-    self.last_sonars = [4 for x in range(20)]
+    self.last_sonars = [4 for x in range(10)]
   
   # def motor_callback(self, msg):
   #   self.current_control = [msg.data[0], msg.data[1]]
@@ -193,7 +193,7 @@ class MinimalSubscriber(Node):
                         else:
                             self.target_box_x_pos = 0
                         self.tag_memory[self.target_box_id]['valid'] == 1
-                    if self.sonar_distance < .075: 
+                    if self.sonar_distance < .1: 
                         # Box acquired
                         self.car.control_car(0, 0)
                         self.state = States.FIND_GOAL
