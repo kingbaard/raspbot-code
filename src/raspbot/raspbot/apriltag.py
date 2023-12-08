@@ -1,17 +1,10 @@
 import cv2
 import numpy as np
 from apriltag import apriltag
-import time
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image, CompressedImage
 from std_msgs.msg import Int32MultiArray
-import cv_bridge
-import cv2
-import numpy as np
-import os
-import time
-import pickle
 
 
 class Apriltag(Node):

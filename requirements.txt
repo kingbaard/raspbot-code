@@ -1,2 +1,4 @@
 apriltag
-picamera2
+getch
+cv2
+numpy

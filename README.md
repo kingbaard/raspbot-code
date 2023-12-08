@@ -16,10 +16,27 @@
 ## To run our code
 
 - Run: `pip install -r requirements`
-- Run: `sh camera`
 - Run: `colcon build --symlink-install`
-- Run: `source src/source.sh`
+- Follow this guide to set up camera [https://medium.com/swlh/raspberry-pi-ros-2-camera-eef8f8b94304](https://medium.com/swlh/raspberry-pi-ros-2-camera-eef8f8b94304)
+- Source generated `setup.bash`
 - Run: `sh src/camera_setup.sh`
-- Run: `sh start_nodes.sh` (requires tmux)
+
+### Run Nodes
+- camera:`ros2 run v4l2_camera v4l2_camera_node --ros-args -p image_size:="[640,480]"`
+- apriltag_detection: `ros2 run raspbot apriltag`
+- motors/state machine: `ros2 run raspbot motors`
+- sonar node: `ros2 run raspbot sonar`
+- keyboard control node (e-stop): `ros2 run raspbot keyboard`
+
+### Start State Machine Loop
+`ros2 topic pub /warehouse_control std_msgs/msg/Bool "{ data: True }"`
+
+### Interesting topics to monitor:
+- `/apriltags`: displays information about detected apriltags
+- `/sonar`: displays the current sonar distance
 
 ## Files to review
+- [apriltag.py](./src/raspbot/raspbot/apriltag.py) - apriltag detection node
+- [keyboard.py](./src/raspbot/raspbot/keyboard.py) - keyboard control node (for e-stop/debugging)
+- [motors.py](./src/raspbot/raspbot/motors.py) - state machine + motor control **The Brain**
+- [sonar.py](./src/raspbot/raspbot/sonar.py) - the sonar node
