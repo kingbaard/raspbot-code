@@ -193,7 +193,7 @@ class MinimalSubscriber(Node):
                         else:
                             self.target_box_x_pos = 0
                         self.tag_memory[self.target_box_id]['valid'] == 1
-                    if self.sonar_distance < .1: 
+                    if self.sonar_distance < .08: 
                         # Box acquired
                         self.car.control_car(0, 0)
                         self.state = States.FIND_GOAL
@@ -249,7 +249,7 @@ class MinimalSubscriber(Node):
 
                 case States.RESET:
                     print("State: RESET")
-                    if self.sonar_distance >= 1:
+                    if self.sonar_distance >= 2:
                         # Backed up now reset state and go again
                         self.car.control_car(0, 0)
                         self.state = States.SEARCH
@@ -295,9 +295,9 @@ class MinimalSubscriber(Node):
   def april_tag_callback(self, msg):
     # msg.data = [id, x_pos]
     print(f"{msg.data}")
-    self.tag_memory[msg.data[0]] = {"pos": msg.data[1], "valid":1.5}
     if msg.data[0] < 3:
       print(f"FOUND BOX {msg.data[0]} AT {msg.data[1]}")
+      self.tag_memory[msg.data[0]] = {"pos": msg.data[1], "valid":1.5}
       self.box_id = msg.data[0]
       self.box_x_pos = msg.data[1]
       if (self.target_box_id is None or self.box_id == self.target_box_id) and self.box_id not in self.completed:
@@ -306,6 +306,7 @@ class MinimalSubscriber(Node):
          self.target_goal_id = self.target_box_id + 3
     else:
       print(f"FOUND GOAL {msg.data[0]} AT {msg.data[1]}")
+      self.tag_memory[msg.data[0]] = {"pos": msg.data[1], "valid":3}
       self.goal_id = msg.data[0]
       self.goal_x_pos = msg.data[1]
       if self.goal_id == self.target_goal_id:
