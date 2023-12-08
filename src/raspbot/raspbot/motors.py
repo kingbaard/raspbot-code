@@ -192,6 +192,7 @@ class MinimalSubscriber(Node):
                             self.target_box_x_pos = 500
                         else:
                             self.target_box_x_pos = 0
+                        self.tag_memory[self.target_box_id]['valid'] == 1
                     if self.sonar_distance < .075: 
                         # Box acquired
                         self.car.control_car(0, 0)
