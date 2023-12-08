@@ -19,7 +19,6 @@ import math
 # 1     | .0042 ish?
 
 MOTOR_POWER = 50
-MOTOR_OFFSET = 15
 APRIL_TAG_MIDDLE = 275
 APRIL_TAG_OFFSET = 100
 
@@ -182,7 +181,7 @@ class MinimalSubscriber(Node):
                         self.state = States.ACQUIRE
                     else:
                         if self.is_driving:
-                            self.car.control_car(-(MOTOR_POWER - MOTOR_OFFSET), MOTOR_POWER)
+                            self.car.control_car(-MOTOR_POWER, MOTOR_POWER)
 
                 case States.ACQUIRE:
                     print("State: ACQUIRE")
@@ -220,7 +219,7 @@ class MinimalSubscriber(Node):
                         self.delivery_start = True
                     else:
                         if self.is_driving:
-                            self.car.control_car(-(MOTOR_POWER - MOTOR_OFFSET), MOTOR_POWER) 
+                            self.car.control_car(-MOTOR_POWER, MOTOR_POWER) 
 
                 case States.DELIVER:
                     print("State: DELIVER")
