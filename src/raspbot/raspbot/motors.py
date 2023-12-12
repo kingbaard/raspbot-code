@@ -332,7 +332,7 @@ class MinimalSubscriber(Node):
       self.sonar_distance = np.average(self.last_sonars)
 
   def ir_callback(self, msg):
-      ir_result = True if msg else False
+      ir_result = True if msg.data else False
 
       self.last_irs.append(ir_result)
       self.last_irs = self.last_irs[1:]
