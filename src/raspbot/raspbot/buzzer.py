@@ -14,6 +14,23 @@ import time
 # IR Sensor Pin Numbers
 BUZZER_PIN = 32
 
+# Notes
+class Notes(Enum):
+    C = 248
+    D = 278
+    E = 294
+    F = 330
+    G = 371
+    A = 416
+    B = 467
+
+    B1 = 495
+    B2 = 556
+    B3 = 624
+    B4 = 661
+    B5 = 742
+    B6 = 833
+    B7 = 935
 
 class Buzzer(Node):
   def __init__(self):
@@ -21,33 +38,34 @@ class Buzzer(Node):
 
     # Set up IR sensors
     GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(RIGHT1, GPIO.IN)
-    GPIO.setup(RIGHT2, GPIO.IN)
-    GPIO.setup(LEFT1, GPIO.IN)
-    GPIO.setup(LEFT1, GPIO.IN)
+    GPIO.setwarnings(False)
+    GPIO.setup(BUZZER_PIN, GPIO.OUT)
+
+    self.pwm = GPIO.PWM(BUZZER_PIN, Notes.C)
 
     timer_period = 0.5
-    self.publisher = self.create_publisher(Bool, 'isDetectingBlack', 10)
-    self.timer = self.create_timer(timer_period, self.ir_callback)
+    self.subscriber = self.subscriber
+
+    def play_found_box(self):
+       music = [
+          [Notes.C, 1],
+          [Notes.D, 0.5],
+          [Notes.E, 0.5],
+          [Notes.G, 1.5],
+       ]
+       play_song(music)
 
     # If at least three sensors publish True, else false
-    def ir_callback(self):
-        return_count = 0
-        for sensor in [RIGHT1, RIGHT2, LEFT1, LEFT2]:
-          if GPIO.input(sensor):
-            return_count += 1
+    def play_delivery_success(self):
+        pass
 
-        if return_count >= 3:
-            self.publisher.publish(True)
-        else:
-            self.publisher.publish(False)
-
-    # IMU Publisher
-    # timer_period = 0.5 # seconds between publish
-    # self.motor_publisher = self.create_publisher(Int32MultiArray, 'imu_control', 10)
-    # self.current_control = [0, 0]
-    # self.timer = self.create_timer(timer_period, self.publish_control)
-
+    def play_song(self, notes):
+        self.pwm.start(50)
+        for note in notes:
+           self.pwm.ChangeFrequency(note[0])
+           time.sleep(note[1])
+        self.pwm.stop()
+        
 
 
 def main(args=None):

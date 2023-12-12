@@ -120,6 +120,7 @@ class MinimalSubscriber(Node):
     self.is_dark_floor = False
     self.last_turned_left = False
     self.last_sonars = [4 for x in range(10)]
+    self.last_irs = [True for x in range(10)]
   
   # def motor_callback(self, msg):
   #   self.current_control = [msg.data[0], msg.data[1]]
@@ -227,11 +228,18 @@ class MinimalSubscriber(Node):
 
                 case States.DELIVER:
                     print("State: DELIVER")
+                    if self.is_dark_floor:
+                          self.completed.append(self.target_box_id)
+                          self.car.control_car(0, 0)
+                          self.state = States.RESET
                     if self.tag_memory[self.target_goal_id]['valid'] <= 0:
                         if self.delivery_start:
                             # Uh oh, we lost the goal, going back to find goal
                             self.state = States.FIND_GOAL
                             return
+                        self.completed.append(self.target_box_id)
+                        self.car.control_car(0, 0)
+                        self.state = States.RESET
                         # Arrived at goal (can't see goal april tag anymore)
                     else:
                         if self.is_dark_floor:
@@ -324,7 +332,12 @@ class MinimalSubscriber(Node):
       self.sonar_distance = np.average(self.last_sonars)
 
   def ir_callback(self, msg):
-      self.is_dark_floor = True if msg else False
+      ir_result = True if msg else False
+
+      self.last_irs.append(ir_result)
+      self.last_irs = self.last_irs[1:]
+      self.is_dark_floor = sum(self.last_irs) > 8
+      print(f"Is dark floor: {self.is_dark_floor}")
 
 class States(Enum):
   SEARCH = 0

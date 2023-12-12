@@ -41,11 +41,11 @@ class IrPublisher(Node):
                 return_count += 1
 
         if return_count >= 3:
-            print("ir output = True")
-            msg = Bool(data=True)
-        else:
             print("ir output = False")
             msg = Bool(data=False)
+        else:
+            print("ir output = True")
+            msg = Bool(data=True)
 
         self.publisher.publish(msg)
 
