@@ -34,6 +34,7 @@ class IrPublisher(Node):
     # If at least three sensors publish True, else false
     def ir_callback(self):
         # Set up IR sensors
+        msg = Bool()
         return_count = 0
         for sensor in [RIGHT1, RIGHT2, LEFT1, LEFT2]:
             print(sensor)
@@ -42,10 +43,12 @@ class IrPublisher(Node):
 
         if return_count >= 3:
             print("ir output = True")
-            self.publisher.publish(True)
+            msg = True
         else:
             print("ir output = False")
-            self.publisher.publish(False)
+            msg = False
+
+        self.publisher.publish(msg)
 
 def main(args=None):
   rclpy.init(args=args)
