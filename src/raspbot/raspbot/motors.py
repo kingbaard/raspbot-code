@@ -227,11 +227,6 @@ class MinimalSubscriber(Node):
 
                 case States.DELIVER:
                     print("State: DELIVER")
-                    # The IR sensors detect the goal, we made it!
-                    if self.is_dark_floor:
-                        self.completed.append(self.target_box_id)
-                        self.car.control_car(0, 0)
-                        self.state = States.RESET
                     if self.tag_memory[self.target_goal_id]['valid'] <= 0:
                         if self.delivery_start:
                             # Uh oh, we lost the goal, going back to find goal
