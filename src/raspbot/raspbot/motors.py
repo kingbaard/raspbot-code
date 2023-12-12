@@ -233,11 +233,11 @@ class MinimalSubscriber(Node):
                             self.state = States.FIND_GOAL
                             return
                         # Arrived at goal (can't see goal april tag anymore)
+                    else:
                         if self.is_dark_floor:
                           self.completed.append(self.target_box_id)
                           self.car.control_car(0, 0)
                           self.state = States.RESET
-                    else:
                         if self.is_driving:
                             if self.target_goal_x_pos > APRIL_TAG_MIDDLE + acceptable_delta:
                                 # Slight turn right
