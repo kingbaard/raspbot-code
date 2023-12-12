@@ -21,16 +21,15 @@ class IrPublisher(Node):
     def __init__(self):
         super().__init__('ir')
 
-        # Set up IR sensors
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setwarnings(False)
-
         timer_period = 0.5
         self.publisher = self.create_publisher(Bool, 'ir', 10)
         self.timer = self.create_timer(timer_period, self.ir_callback)
 
     # If at least three sensors publish True, else false
     def ir_callback(self):
+        # Set up IR sensors
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setwarnings(False)
         GPIO.setup(RIGHT1, GPIO.IN)
         GPIO.setup(RIGHT2, GPIO.IN)
         GPIO.setup(LEFT1, GPIO.IN)
@@ -47,13 +46,6 @@ class IrPublisher(Node):
         else:
             print("ir output = False")
             self.publisher.publish(False)
-
-    # IMU Publisher
-    # timer_period = 0.5 # seconds between publish
-    # self.motor_publisher = self.create_publisher(Int32MultiArray, 'imu_control', 10)
-    # self.current_control = [0, 0]
-    # self.timer = self.create_timer(timer_period, self.publish_control)
-
 
 def main(args=None):
   rclpy.init(args=args)
