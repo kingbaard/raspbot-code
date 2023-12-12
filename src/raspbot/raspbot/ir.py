@@ -23,6 +23,7 @@ class IrPublisher(Node):
 
         # Set up IR sensors
         GPIO.setmode(GPIO.BOARD)
+        GPIO.setwarnings(False)
         GPIO.setup(RIGHT1, GPIO.IN)
         GPIO.setup(RIGHT2, GPIO.IN)
         GPIO.setup(LEFT1, GPIO.IN)
