@@ -37,7 +37,6 @@ class IrPublisher(Node):
         msg = Bool()
         return_count = 0
         for sensor in [RIGHT1, RIGHT2, LEFT1, LEFT2]:
-            print(sensor)
             if GPIO.input(sensor):
                 return_count += 1
 
