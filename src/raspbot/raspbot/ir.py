@@ -56,15 +56,14 @@ class IrPublisher(Node):
 def main(args=None):
   rclpy.init(args=args)
   
-  subscriber = IrPublisher()
+  publisher = IrPublisher()
   
   try:
-    rclpy.spin(subscriber)
+    rclpy.spin(publisher)
   except Exception as e:
     print(e)
-    subscriber.car.stop()
   
-  subscriber.destroy_node()
+  publisher.destroy_node()
   rclpy.shutdown()
 
 if __name__ == '__main__':
