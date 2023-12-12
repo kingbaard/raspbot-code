@@ -337,7 +337,10 @@ class MinimalSubscriber(Node):
       self.last_irs.append(ir_result)
       self.last_irs = self.last_irs[1:]
       self.is_dark_floor = sum(self.last_irs) > 8
-      print(f"Is dark floor: {self.last_irs}")
+      print(f"sum(self.last_irs) > 8: {sum(self.last_irs) > 8}")
+      print(f"is_dark_floor: {self.is_dark_floor}")
+      print(f"Ilast_irs: {self.last_irs}\n")
+
 
 class States(Enum):
   SEARCH = 0
