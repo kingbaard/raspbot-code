@@ -27,7 +27,8 @@ setup(
             'imu = raspbot.imu:main',
             'camera_listener = raspbot.camera_listener:main',
             'apriltag = raspbot.apriltag:main',
-            'ir = raspbot.ir:main'
+            'ir = raspbot.ir:main',
+            'buzzer = raspbot.buzzer:main'
         ],
     },
 )

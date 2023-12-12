@@ -33,27 +33,42 @@ class Notes(Enum):
     B7 = 935
 
 class Buzzer(Node):
-  def __init__(self):
-    super().__init__('ir')
+    def __init__(self):
+        super().__init__('ir')
 
-    # Set up IR sensors
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setwarnings(False)
-    GPIO.setup(BUZZER_PIN, GPIO.OUT)
+        # Set up IR sensors
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setwarnings(False)
+        GPIO.setup(BUZZER_PIN, GPIO.OUT)
 
-    self.pwm = GPIO.PWM(BUZZER_PIN, Notes.C)
+        self.pwm = GPIO.PWM(BUZZER_PIN, Notes.C)
 
-    timer_period = 0.5
-    self.subscriber = self.subscriber
+        timer_period = 0.5
+        self.subscriber = self.subscriber
+        self.subscription = self.create_subscription(Char, '/state', self.state_callback, 10)
+        self.state_hist = [0, 0]
+
+    def state_callback(self, msg):
+        self.state_hist[0] = self.state_hist[1]
+        self.state_hist[1] = msg.data
+
+        #Found box condition
+        match self.state_hist:
+            case [0, 1]:
+                self.play_found_box()
+            case [3, 4]:
+                self.play_delivery_success()
+            case _:
+                pass
 
     def play_found_box(self):
-       music = [
-          [Notes.C, 1],
-          [Notes.D, 0.5],
-          [Notes.E, 0.5],
-          [Notes.G, 1.5],
-       ]
-       play_song(music)
+        music = [
+            [Notes.C, 1],
+            [Notes.D, 0.5],
+            [Notes.E, 0.5],
+            [Notes.G, 1.5],
+        ]
+        self.play_song(music)
 
     # If at least three sensors publish True, else false
     def play_delivery_success(self):
@@ -62,8 +77,8 @@ class Buzzer(Node):
     def play_song(self, notes):
         self.pwm.start(50)
         for note in notes:
-           self.pwm.ChangeFrequency(note[0])
-           time.sleep(note[1])
+            self.pwm.ChangeFrequency(note[0])
+            time.sleep(note[1])
         self.pwm.stop()
         
 

@@ -4,7 +4,7 @@ import numpy as np
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import Char, Bool, Int32MultiArray
+from std_msgs.msg import Char, Bool, Int32MultiArray, Int32
 from sensor_msgs.msg import Range
 
 import smbus
@@ -92,11 +92,10 @@ class MinimalSubscriber(Node):
     self.sonar_subscription = self.create_subscription(Range, '/sonar', self.sonar_callback, 10)
     self.ir_subscription = self.create_subscription(Bool, '/ir', self.ir_callback, 10)
 
-    # IMU Publisher
-    # timer_period = 0.5 # seconds between publish
-    # self.motor_publisher = self.create_publisher(Int32MultiArray, 'imu_control', 10)
-    # self.current_control = [0, 0]
-    # self.timer = self.create_timer(timer_period, self.publish_control)
+    # State Publisher
+    timer_period = 0.5 # seconds between publish
+    self.state_publisher = self.create_publisher(Int32, 'state', 10)
+    self.state_publish_timer = self.create_timer(timer_period, self.publish_state)
 
     # Initial values
     # self.servo1_angle = -1
@@ -120,7 +119,7 @@ class MinimalSubscriber(Node):
     self.is_dark_floor = False
     self.last_turned_left = False
     self.last_sonars = [4 for x in range(10)]
-    self.last_irs = [False for x in range(10)]
+    self.last_irs = [False for x in range(5)]
   
   # def motor_callback(self, msg):
   #   self.current_control = [msg.data[0], msg.data[1]]
@@ -336,10 +335,10 @@ class MinimalSubscriber(Node):
 
       self.last_irs.append(ir_result)
       self.last_irs = self.last_irs[1:]
-      self.is_dark_floor = sum(self.last_irs) > 8
-      print(f"sum(self.last_irs) > 8: {sum(self.last_irs) > 8}")
-      print(f"is_dark_floor: {self.is_dark_floor}")
-      print(f"Ilast_irs: {self.last_irs}\n")
+      self.is_dark_floor = sum(self.last_irs) > 4
+
+  def state_callback(self):
+      self.state_publisher.publish(Int32(msg=self.state))
 
 
 class States(Enum):
