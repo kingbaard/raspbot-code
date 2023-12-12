@@ -86,13 +86,12 @@ class Buzzer(Node):
 def main(args=None):
   rclpy.init(args=args)
   
-  subscriber = IrPublisher()
+  subscriber = subscriber()
   
   try:
     rclpy.spin(subscriber)
   except Exception as e:
     print(e)
-    subscriber.car.stop()
   
   subscriber.destroy_node()
   rclpy.shutdown()
