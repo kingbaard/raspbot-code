@@ -90,6 +90,7 @@ class MinimalSubscriber(Node):
     self.warehouse_subscription = self.create_subscription(Bool, '/warehouse_control', self.warehouse_callback, 10)
     self.april_tag_subscription = self.create_subscription(Int32MultiArray, '/apriltags', self.april_tag_callback, 10)
     self.sonar_subscription = self.create_subscription(Range, '/sonar', self.sonar_callback, 10)
+    self.ir_subscription = self.create_subscription(Bool, '/ir', self.ir_callback, 10)
 
     # IMU Publisher
     # timer_period = 0.5 # seconds between publish
@@ -116,6 +117,7 @@ class MinimalSubscriber(Node):
     self.tag_memory = {}
     self.action_clock = 0
     self.is_driving = False
+    self.is_dark_floor = False
     self.last_turned_left = False
     self.last_sonars = [4 for x in range(10)]
   
@@ -225,6 +227,11 @@ class MinimalSubscriber(Node):
 
                 case States.DELIVER:
                     print("State: DELIVER")
+                    # The IR sensors detect the goal, we made it!
+                    if self.is_dark_floor:
+                        self.completed.append(self.target_box_id)
+                        self.car.control_car(0, 0)
+                        self.state = States.RESET
                     if self.tag_memory[self.target_goal_id]['valid'] <= 0:
                         if self.delivery_start:
                             # Uh oh, we lost the goal, going back to find goal
@@ -285,7 +292,6 @@ class MinimalSubscriber(Node):
             else:
                self.action_clock = 0.5
             
-
   def update_tag_memory(self, elapsed_time):
      for tag in self.tag_memory.values():
         tag['valid'] -= elapsed_time
@@ -320,6 +326,9 @@ class MinimalSubscriber(Node):
       self.last_sonars.append(range)
       self.last_sonars = self.last_sonars[1:]
       self.sonar_distance = np.average(self.last_sonars)
+
+  def ir_callback(self, msg):
+      self.is_dark_floor = True if msg else False
 
 class States(Enum):
   SEARCH = 0

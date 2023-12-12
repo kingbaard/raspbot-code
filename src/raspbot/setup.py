@@ -26,7 +26,8 @@ setup(
             'keyboard = raspbot.keyboard:main',
             'imu = raspbot.imu:main',
             'camera_listener = raspbot.camera_listener:main',
-            'apriltag = raspbot.apriltag:main'
+            'apriltag = raspbot.apriltag:main',
+            'ir = raspbot.ir:main'
         ],
     },
 )
