@@ -339,7 +339,7 @@ class MinimalSubscriber(Node):
 
   def publish_state(self):
       msg = Int32()
-      msg.data = int(self.state.value)
+      msg.data = self.state.value
       print(f"self.state.value: {self.state.value}")
       self.state_publisher.publish(msg)
 
