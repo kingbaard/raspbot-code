@@ -338,7 +338,7 @@ class MinimalSubscriber(Node):
       self.is_dark_floor = sum(self.last_irs) > 4
 
   def publish_state(self):
-      msg = Int32
+      msg = Int32()
       msg.data = int(self.state.value)
       self.state_publisher.publish(msg)
 
