@@ -33,8 +33,10 @@ class Notes(Enum):
     C_HIGH = 990
     D_HIGH = 1112
     E_HIGH = 1178
+    EF_HIGH = 1250
     F_HIGH = 1322
     G_HIGH = 1484
+    GF_HIGH = 1574
     A_HIGH = 1665
     B_HIGH = 1869
 
@@ -81,13 +83,14 @@ class Buzzer(Node):
 
     def play_found_box(self):
         music = [
-            [Notes.G, 0.5],
-            [Notes.FS, 0.5],
-            [Notes.EF, 0.5],
-            [Notes.GS_LOW, 0.5],
-            [Notes.E, 0.5],
+            [Notes.GF_HIGH, 0.5],
+            [Notes.F_HIGH, 0.5],
+            [Notes.D_HIGH, 0.5],
             [Notes.AF, 0.5],
-            [Notes.C, 1],
+            [Notes.B, 0.5],
+            [Notes.EF_HIGH, 0.5],
+            [Notes.G_HIGH, 0.5],
+            [Notes.B_HIGH, 1],
         ]
         self.play_song(music)
 
