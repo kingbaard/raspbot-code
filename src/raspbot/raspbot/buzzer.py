@@ -93,7 +93,18 @@ class Buzzer(Node):
 
     # If at least three sensors publish True, else false
     def play_delivery_success(self):
-        pass
+        music = [
+            [Notes.C_HIGH, 0.5],
+            [Notes.C_HIGH, 0.5],
+            [Notes.C_HIGH, 0.5],
+            [Notes.C_HIGH, 0.5],
+            [Notes.G, 0.75],
+            [Notes.A, 0.75],
+            [Notes.C_HIGH, 0.5],
+            [Notes.A, 0.75],
+            [Notes.C_HIGH, 1.5],
+            ]
+        self.play_song(music)
 
     def play_song(self, notes):
         self.pwm.start(90   )
