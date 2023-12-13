@@ -94,7 +94,7 @@ class MinimalSubscriber(Node):
 
     # State Publisher
     timer_period = 0.5 # seconds between publish
-    self.state_publisher = self.create_publisher(Int32, '/state', 10)
+    self.state_publisher = self.create_publisher(Int32, 'delivery_state', 10)
     self.state_publish_timer = self.create_timer(timer_period, self.publish_state)
 
     # Initial values
@@ -340,7 +340,7 @@ class MinimalSubscriber(Node):
   def publish_state(self):
       msg = Int32()
       msg.data = self.state.value
-      print(f"self.state.value: {self.state.value}")
+      print(f"self.state.value: {type(self.state.value)}")
       self.state_publisher.publish(msg)
 
 

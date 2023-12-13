@@ -44,7 +44,7 @@ class Buzzer(Node):
         self.pwm = GPIO.PWM(BUZZER_PIN, Notes.C.value)
 
         timer_period = 0.5
-        self.subscription = self.create_subscription(Char, '/state', self.state_callback, 10)
+        self.subscription = self.create_subscription(Char, '/delivery_state', self.state_callback, 10)
         self.state_hist = [0, 0]
 
     def state_callback(self, msg):
