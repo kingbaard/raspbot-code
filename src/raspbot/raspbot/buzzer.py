@@ -34,14 +34,14 @@ class Notes(Enum):
 
 class Buzzer(Node):
     def __init__(self):
-        super().__init__('ir')
+        super().__init__('buzzer')
 
         # Set up IR sensors
         GPIO.setmode(GPIO.BOARD)
         GPIO.setwarnings(False)
         GPIO.setup(BUZZER_PIN, GPIO.OUT)
 
-        self.pwm = GPIO.PWM(BUZZER_PIN, Notes.C)
+        self.pwm = GPIO.PWM(BUZZER_PIN, Notes.C.value)
 
         timer_period = 0.5
         self.subscriber = self.subscriber
@@ -77,8 +77,8 @@ class Buzzer(Node):
     def play_song(self, notes):
         self.pwm.start(50)
         for note in notes:
-            self.pwm.ChangeFrequency(note[0])
-            time.sleep(note[1])
+            self.pwm.ChangeFrequency(note[0].value)
+            time.sleep(note[1].value)
         self.pwm.stop()
         
 
