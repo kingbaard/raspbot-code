@@ -64,14 +64,18 @@ class Buzzer(Node):
 
     def play_init_sound(self):
         music = [
-            [Notes.E, 5],
-            [Notes.D, 5],
-            [Notes.C, 3],
-            [Notes.D, 3],
-            [Notes.E, 3],
-            [Notes.E, 3],
-            [Notes.E, 3],
-            [Notes.G, 1.5],
+            [Notes.E, 0.75],
+            [Notes.D, 0.75],
+            [Notes.C, 0.75],
+            [Notes.D, 0.5],
+            [Notes.E, 0.5],
+            [Notes.E, 0.5],
+            [Notes.E, 0.75],
+            [Notes.D, 0.5],
+            [Notes.D, 0.5],
+            [Notes.E, 0.5],
+            [Notes.E, 0.5],
+            [Notes.E, 0.75]
             ]
         self.play_song(music)
 
