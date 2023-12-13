@@ -101,21 +101,11 @@ class Buzzer(Node):
         self.play_note(Notes.C_HIGH, 1, 0.25)
         self.play_note(Notes.A, 0.5, 0.25)
         self.play_note(Notes.C_HIGH, 2, 0.25)
-        music = [
-            [Notes.C_HIGH, 0.5],
-            [Notes.C_HIGH, 0.5],
-            [Notes.C_HIGH, 0.5],
-            [Notes.C_HIGH, 0.5],
-            [Notes.G, 0.75],
-            [Notes.A, 0.75],
-            [Notes.C_HIGH, 0.5],
-            [Notes.A, 0.75],
-            [Notes.C_HIGH, 1.5],
-            ]
-        self.play_song(music)
+
 
     def play_note(self, note, duration, rest):
-        self.pwm.start(note.value)
+        self.pwm.start(90)
+        self.pwm.ChangeFrequency(note.value)
         time.sleep(duration)
         self.pwm.stop()
         time.sleep(rest)
@@ -139,6 +129,7 @@ def main(args=None):
   except Exception as e:
     print(e)
   
+  GPIO.cleanup()
   subscriber.destroy_node()
   rclpy.shutdown()
 
