@@ -1,13 +1,9 @@
 from enum import Enum
-
 import numpy as np
 import rclpy
 from rclpy.node import Node
-
-from std_msgs.msg import Char, Bool, Int32MultiArray
+from std_msgs.msg import Int32
 from sensor_msgs.msg import Range
-
-import smbus
 import RPi.GPIO as GPIO
 
 # IR Sensor Pin Numbers

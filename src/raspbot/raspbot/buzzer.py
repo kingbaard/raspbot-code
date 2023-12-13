@@ -1,13 +1,7 @@
 from enum import Enum
-
-import numpy as np
 import rclpy
 from rclpy.node import Node
-
-from std_msgs.msg import Char, Bool, Int32
-from sensor_msgs.msg import Range
-
-import smbus
+from std_msgs.msg import Int32
 import RPi.GPIO as GPIO
 import time
 
@@ -21,14 +15,18 @@ class Notes(Enum):
     E_LOW = 294
     F_LOW = 330
     G_LOW = 371
+    GS_LOW = 394
     A_LOW = 416
     B_LOW = 467
 
     C = 495
     D = 556
+    EF = 590
     E = 624
     F = 661
+    FS = 701
     G = 742
+    AF = 788
     A = 833
     B = 935
 
@@ -83,16 +81,26 @@ class Buzzer(Node):
 
     def play_found_box(self):
         music = [
-            [Notes.C, 1],
-            [Notes.D, 0.5],
+            [Notes.G, 0.5],
+            [Notes.FS, 0.5],
+            [Notes.EF, 0.5],
+            [Notes.GS_LOW, 0.5],
             [Notes.E, 0.5],
-            [Notes.G, 1.5],
-            [Notes.D, 0.5],
+            [Notes.AF, 0.5],
+            [Notes.C, 1],
         ]
         self.play_song(music)
 
     # If at least three sensors publish True, else false
     def play_delivery_success(self):
+        self.play_note(Notes.C_HIGH, 0.5, 0.25)
+        self.play_note(Notes.C_HIGH, 0.5, 0.25)
+        self.play_note(Notes.C_HIGH, 0.5, 0.25)
+        self.play_note(Notes.G, 1, 0.1)
+        self.play_note(Notes.A, 1, 0.1)
+        self.play_note(Notes.C_HIGH, 1, 0.25)
+        self.play_note(Notes.A, 0.5, 0.25)
+        self.play_note(Notes.C_HIGH, 2, 0.25)
         music = [
             [Notes.C_HIGH, 0.5],
             [Notes.C_HIGH, 0.5],
@@ -105,6 +113,12 @@ class Buzzer(Node):
             [Notes.C_HIGH, 1.5],
             ]
         self.play_song(music)
+
+    def play_note(self, note, duration, rest):
+        self.pwm(note.value)
+        time.sleep(duration)
+        self.pwm.stop()
+        time.sleep(rest)
 
     def play_song(self, notes):
         self.pwm.start(90   )

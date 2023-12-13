@@ -24,8 +24,10 @@
 ### Run Nodes
 - camera:`ros2 run v4l2_camera v4l2_camera_node --ros-args -p image_size:="[640,480]"`
 - apriltag_detection: `ros2 run raspbot apriltag`
-- motors/state machine: `ros2 run raspbot motors`
 - sonar node: `ros2 run raspbot sonar`
+- downward-facing IR sensors: `ros2 run raspbot ir`
+- buzzer: `ros2 run raspbot buzzer`
+- motors/state machine: `ros2 run raspbot motors`
 - keyboard control node (e-stop): `ros2 run raspbot keyboard`
 
 ### Start State Machine Loop
@@ -40,3 +42,5 @@
 - [keyboard.py](./src/raspbot/raspbot/keyboard.py) - keyboard control node (for e-stop/debugging)
 - [motors.py](./src/raspbot/raspbot/motors.py) - state machine + motor control **The Brain**
 - [sonar.py](./src/raspbot/raspbot/sonar.py) - the sonar node
+- [sonar.py](./src/raspbot/raspbot/ir.py) - the IR node
+- [sonar.py](./src/raspbot/raspbot/buzzer.py) - the buzzer node

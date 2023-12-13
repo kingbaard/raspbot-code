@@ -236,11 +236,12 @@ class MinimalSubscriber(Node):
                             # Uh oh, we lost the goal, going back to find goal
                             self.state = States.FIND_GOAL
                             return
+                        # Arrived at goal (can't see goal april tag anymore)
                         self.completed.append(self.target_box_id)
                         self.car.control_car(0, 0)
                         self.state = States.RESET
-                        # Arrived at goal (can't see goal april tag anymore)
                     else:
+                        # Arrived at goal (or location with similar floor material)
                         if self.is_dark_floor:
                           self.completed.append(self.target_box_id)
                           self.car.control_car(0, 0)
