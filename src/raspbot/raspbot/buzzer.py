@@ -92,7 +92,7 @@ class Buzzer(Node):
         self.pwm.start(50)
         for note in notes:
             self.pwm.ChangeFrequency(note[0].value)
-            time.sleep(note[1].value)
+            time.sleep(note[1])
         self.pwm.stop()
         
 
