@@ -31,7 +31,7 @@
 - keyboard control node (e-stop): `ros2 run raspbot keyboard`
 
 ### Start State Machine Loop
-`ros2 topic pub /warehouse_control std_msgs/msg/Bool "{ data: True }"`
+`ros2 topic pub -r 100 /warehouse_control std_msgs/msg/Bool "{ data: True }"`
 
 ### Interesting topics to monitor:
 - `/apriltags`: displays information about detected apriltags
