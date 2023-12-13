@@ -72,17 +72,12 @@ class Buzzer(Node):
 
     def play_init_sound(self):
         music = [
-            [Notes.C_HIGH, 0.75]
-            ]
-        self.play_song(music)
-        time.sleep(0.25)
-        music = [
             [Notes.E_HIGH, 0.75]
             ]
         self.play_song(music)
-        time.sleep(0.25)
+        time.sleep(0.1)
         music = [
-            [Notes.C_HIGH, 0.75]
+            [Notes.E_HIGH, 0.75]
             ]
         self.play_song(music)
 
@@ -92,6 +87,7 @@ class Buzzer(Node):
             [Notes.D, 0.5],
             [Notes.E, 0.5],
             [Notes.G, 1.5],
+            [Notes.D, 0.5],
         ]
         self.play_song(music)
 
@@ -100,7 +96,7 @@ class Buzzer(Node):
         pass
 
     def play_song(self, notes):
-        self.pwm.start(90)
+        self.pwm.start(90   )
         for note in notes:
             self.pwm.ChangeFrequency(note[0].value)
             time.sleep(note[1])
