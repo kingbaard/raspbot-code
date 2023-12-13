@@ -50,6 +50,7 @@ class Buzzer(Node):
     def state_callback(self, msg):
         self.state_hist[0] = self.state_hist[1]
         self.state_hist[1] = msg.data
+        print(self.state_hist)
 
         #Found box condition
         match self.state_hist:
