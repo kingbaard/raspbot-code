@@ -4,7 +4,7 @@ import numpy as np
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import Char, Bool, Int32MultiArray
+from std_msgs.msg import Char, Bool, Int32
 from sensor_msgs.msg import Range
 
 import smbus
@@ -43,8 +43,7 @@ class Buzzer(Node):
 
         self.pwm = GPIO.PWM(BUZZER_PIN, Notes.C.value)
 
-        timer_period = 0.5
-        self.subscription = self.create_subscription(Char, '/delivery_state', self.state_callback, 10)
+        self.subscription = self.create_subscription(Int32, '/delivery_state', self.state_callback, 10)
         self.state_hist = [0, 0]
 
     def state_callback(self, msg):
@@ -55,6 +54,7 @@ class Buzzer(Node):
         #Found box condition
         match self.state_hist:
             case [0, 1]:
+                print("Playing found box tune")
                 self.play_found_box()
             case [3, 4]:
                 self.play_delivery_success()
