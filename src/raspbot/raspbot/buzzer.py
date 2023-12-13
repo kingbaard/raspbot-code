@@ -32,8 +32,6 @@ class Notes(Enum):
     A = 833
     B = 935
 
-    REST = 0
-
 class Buzzer(Node):
     def __init__(self):
         super().__init__('buzzer')
@@ -67,10 +65,8 @@ class Buzzer(Node):
     def play_init_sound(self):
         music = [
             [Notes.C, 0.75],
-            [Notes.REST, 0.5],
-            [Notes.C, 0.75],
-            [Notes.REST, 0.5],
-            [Notes.E, 1],
+            [Notes.D, 0.75],
+            [Notes.G, 1],
             ]
         self.play_song(music)
 
