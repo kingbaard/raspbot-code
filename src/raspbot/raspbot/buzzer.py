@@ -86,7 +86,7 @@ class Buzzer(Node):
 def main(args=None):
   rclpy.init(args=args)
   
-  subscriber = subscriber()
+  subscriber = Buzzer()
   
   try:
     rclpy.spin(subscriber)
