@@ -32,6 +32,14 @@ class Notes(Enum):
     A = 833
     B = 935
 
+    C_HIGH = 990
+    D_HIGH = 1112
+    E_HIGH = 1178
+    F_HIGH = 1322
+    G_HIGH = 1484
+    A_HIGH = 1665
+    B_HIGH = 1869
+
 class Buzzer(Node):
     def __init__(self):
         super().__init__('buzzer')
@@ -64,9 +72,9 @@ class Buzzer(Node):
 
     def play_init_sound(self):
         music = [
-            [Notes.B, 0.75],
-            [Notes.B, 0.75],
-            [Notes.A, 1],
+            [Notes.F_HIGH, 0.75],
+            [Notes.G_HIGH, 0.75],
+            [Notes.F_HIGH, 1],
             ]
         self.play_song(music)
 
