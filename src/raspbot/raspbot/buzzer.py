@@ -42,6 +42,7 @@ class Buzzer(Node):
         GPIO.setup(BUZZER_PIN, GPIO.OUT)
 
         self.pwm = GPIO.PWM(BUZZER_PIN, Notes.C.value)
+        self.play_init_sound()
 
         self.subscription = self.create_subscription(Int32, '/delivery_state', self.state_callback, 10)
         self.state_hist = [0, 0]
@@ -60,6 +61,19 @@ class Buzzer(Node):
                 self.play_delivery_success()
             case _:
                 pass
+
+    def play_init_sound(self):
+        music = [
+            [Notes.E, 5],
+            [Notes.D, 5],
+            [Notes.C, 3],
+            [Notes.D, 3],
+            [Notes.E, 3],
+            [Notes.E, 3],
+            [Notes.E, 3],
+            [Notes.G, 1.5],
+            ]
+        self.play_song(music)
 
     def play_found_box(self):
         music = [
