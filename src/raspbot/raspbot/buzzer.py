@@ -16,21 +16,23 @@ BUZZER_PIN = 32
 
 # Notes
 class Notes(Enum):
-    C = 248
-    D = 278
-    E = 294
-    F = 330
-    G = 371
-    A = 416
-    B = 467
+    C_LOW = 248
+    D_LOW = 278
+    E_LOW = 294
+    F_LOW = 330
+    G_LOW = 371
+    A_LOW = 416
+    B_LOW = 467
 
-    B1 = 495
-    B2 = 556
-    B3 = 624
-    B4 = 661
-    B5 = 742
-    B6 = 833
-    B7 = 935
+    C = 495
+    D = 556
+    E = 624
+    F = 661
+    G = 742
+    A = 833
+    B = 935
+
+    REST = 0
 
 class Buzzer(Node):
     def __init__(self):
@@ -64,18 +66,11 @@ class Buzzer(Node):
 
     def play_init_sound(self):
         music = [
-            [Notes.E, 0.75],
-            [Notes.D, 0.75],
             [Notes.C, 0.75],
-            [Notes.D, 0.5],
-            [Notes.E, 0.5],
-            [Notes.E, 0.5],
-            [Notes.E, 0.75],
-            [Notes.D, 0.5],
-            [Notes.D, 0.5],
-            [Notes.E, 0.5],
-            [Notes.E, 0.5],
-            [Notes.E, 0.75]
+            [Notes.REST, 0.5],
+            [Notes.C, 0.75],
+            [Notes.REST, 0.5],
+            [Notes.E, 1],
             ]
         self.play_song(music)
 
