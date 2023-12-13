@@ -2,7 +2,7 @@ from enum import Enum
 import numpy as np
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Int32
+from std_msgs.msg import Bool
 from sensor_msgs.msg import Range
 import RPi.GPIO as GPIO
 
