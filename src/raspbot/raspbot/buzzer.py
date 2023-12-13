@@ -115,13 +115,13 @@ class Buzzer(Node):
         self.play_song(music)
 
     def play_note(self, note, duration, rest):
-        self.pwm(note.value)
+        self.pwm.start(note.value)
         time.sleep(duration)
         self.pwm.stop()
         time.sleep(rest)
 
     def play_song(self, notes):
-        self.pwm.start(90   )
+        self.pwm.start(90)
         for note in notes:
             self.pwm.ChangeFrequency(note[0].value)
             time.sleep(note[1])
